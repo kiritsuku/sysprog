@@ -29,7 +29,7 @@ Tokens::Token Automat::IdentState::accept(const char c)
     case '6': case '7': case '8': case '9':
       break;
     default:
-//      token = this->switchState(StartState::instance(), Tokens::Ident);
+      token = outer.switchState(outer.startState, Tokens::Ident);
       break;
   }
   return Tokens::None;
@@ -66,7 +66,7 @@ Tokens::Token Automat::accept(const char c)
 {
   lastState.accept(c);
   Tokens::Token token;
-  switch(c) {
+/*  switch(c) {
     case ' ': case '\t':
       token = switchState(StartState::instance(), Tokens::Ignore);
       break;
@@ -140,6 +140,6 @@ Tokens::Token Automat::accept(const char c)
 
     case ']':
       break;
-  }
+  }*/
   return token;
 }

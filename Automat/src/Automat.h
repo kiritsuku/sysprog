@@ -5,57 +5,61 @@
 
 class Automat final {
 public:
-	explicit Automat(): lastState(StartState::instance()) {}
-	~Automat() {}
+	explicit Automat():
+    startState(*new StartState(*this)),
+    lastState(startState)
+  {}
+
+	~Automat() {
+    delete &startState;
+    delete &lastState;
+  }
 
   Tokens::Token accept(const char c);
 
 private:
   class State {
   public:
-//    State(Automat& outer): outer(outer) {}
+    virtual ~State() {
+      delete &outer;
+    }
+    State(Automat& outer): outer(outer) {}
     virtual Tokens::Token accept(const char c) = 0;
- // private:
- //   Automat& outer;
+    inline const State& operator=(const State& state) {
+      // TODO why is this function needed?
+      return state;
+    }
+  protected:
+    Automat &outer;
   };
   class StartState final : public State {
   public:
-    static StartState& instance() {
-      static StartState ins;
-      return ins;
-    }
+    StartState(Automat& outer): State(outer) {}
     Tokens::Token accept(const char c) override;
   };
   class IdentState final : public State {
   public:
-    static IdentState& instance() {
-      static IdentState ins;
-      return ins;
-    }
+    IdentState(Automat& outer): State(outer) {}
     Tokens::Token accept(const char c) override;
   };
   class SignState final : public State {
   public:
-    static SignState& instance() {
-      static SignState ins;
-      return ins;
-    }
+    SignState(Automat& outer): State(outer) {}
     Tokens::Token accept(const char c) override;
   };
   class IntState final : public State {
   public:
-    static IntState& instance() {
-      static IntState ins;
-      return ins;
-    }
+    IntState(Automat& outer): State(outer) {}
     Tokens::Token accept(const char c) override;
   };
 
-  Tokens::Token switchState(State& newState, Tokens::Token newToken);
+  Tokens::Token switchState(State &newState, Tokens::Token newToken);
+
+  StartState &startState;
 
   unsigned acceptedSigns;
   Tokens::Token lastToken;
-  State& lastState;
+  State &lastState;
 };
 
 #endif
