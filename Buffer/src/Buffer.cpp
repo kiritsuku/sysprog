@@ -35,24 +35,23 @@ int fileSize(FILE* f)
   return fileSize;
 }
 
-void readFile(const char *name)
+void Buffer::readFile(const char* name)
 {
-  unsigned char bufferSize = 16;
-  unsigned char buffer[bufferSize];
+  char* buffer = this->curBuffer;
   FILE* f = nullptr;
-  if ((f = openFileReadOnly(name))) {
+  if ((f = openFileReadOnly(name)) != nullptr) {
     int size = fileSize(f);
     printf("file size: %d\n", size);
-    for (int i = 0; i < size; i += bufferSize) {
-      int numRead = fread(buffer, 1, bufferSize, f);
+    for (int i = 0; i < size; i += BUFFER_SIZE) {
+      int numRead = fread(buffer, 1, BUFFER_SIZE, f);
       if (numRead < 1) {
         printErr("Could not read from file '%s'", name);
         break;
       }
       // handles end of file
-      if (numRead < bufferSize) {
-        memset(&buffer[numRead], 0, bufferSize-numRead);
-      }
+//      if (numRead < BUFFER_SIZE) {
+//        memset(&buffer[numRead], 0, BUFFER_SIZE-numRead);
+//      }
       printf(">>>%.*s<<<\n", numRead, buffer);
     }
     fclose(f);
@@ -61,6 +60,9 @@ void readFile(const char *name)
 
 char Buffer::nextChar()
 {
+  if (off == 0) {
+    readFile(this->fileName);
+  }
   return 0;
 }
 
