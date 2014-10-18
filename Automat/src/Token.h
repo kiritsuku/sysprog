@@ -43,11 +43,33 @@ public:
 
   static const unsigned MaxToken = static_cast<unsigned>(While);
 
+  static Token tokenOf(unsigned char c) {
+    switch(c) {
+      case '+': return Plus;
+      case '-': return Minus;
+      case '/': return Div;
+      case '*': return Mul;
+      case '<': return Smaller;
+      case '>': return Greater;
+      case '=': return Equals;
+      case '!': return Bang;
+      case '&': return And;
+      case ';': return Semi;
+      case '(': return LParen;
+      case ')': return RParen;
+      case '{': return LBrace;
+      case '}': return RBrace;
+      case '[': return LBracket;
+      case ']': return RBracket;
+      default : return Error;
+    }
+  }
+
   unsigned textLen(const Token token) {
     auto repr = tokenString[static_cast<unsigned>(token)];
     return strlen(repr);
   }
-  
+
   const char* text(const Token token) {
     return tokenString[static_cast<unsigned>(token)];
   }

@@ -1,19 +1,42 @@
 #include "Automat.h"
 
-#ifndef OUTERCLASS
-#define OUTERCLASS(className, memberName) \
-    reinterpret_cast<className*>(reinterpret_cast<unsigned char*>(this) - offsetof(className, memberName))
-#endif
-
 Tokens::Token Automat::StartState::accept(const char c)
 {
-  (void) c;
-  return Tokens::None;
+  switch(c) {
+    case ' ': case '\t':
+      return Tokens::Ignore;
+    case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
+    case 'g': case 'h': case 'i': case 'j': case 'k': case 'l':
+    case 'm': case 'n': case 'o': case 'p': case 'q': case 'r':
+    case 's': case 't': case 'u': case 'v': case 'w': case 'x':
+    case 'y': case 'z':
+    case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
+    case 'G': case 'H': case 'I': case 'J': case 'K': case 'L':
+    case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R':
+    case 'S': case 'T': case 'U': case 'V': case 'W': case 'X':
+    case 'Y': case 'Z':
+      outer.state = outer.identState;
+      return Tokens::None;
+
+    case '0': case '1': case '2': case '3': case '4': case '5':
+    case '6': case '7': case '8': case '9':
+      outer.state = outer.intState;
+      return Tokens::None;
+
+    case '+': case '-': case '/': case '*': case '<': case '>':
+    case '=': case '!': case '&': case ';': case '(': case ')':
+    case '{': case '}': case '[': case ']': case ':':
+      outer.lastSign = c;
+      outer.state = outer.signState;
+      return Tokens::None;
+
+    default:
+      return Tokens::Error;
+  }
 }
 
 Tokens::Token Automat::IdentState::accept(const char c)
 {
-  Tokens::Token token;
   switch(c) {
     case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
     case 'g': case 'h': case 'i': case 'j': case 'k': case 'l':
@@ -27,119 +50,97 @@ Tokens::Token Automat::IdentState::accept(const char c)
     case 'Y': case 'Z':
     case '0': case '1': case '2': case '3': case '4': case '5':
     case '6': case '7': case '8': case '9':
-      break;
+      return Tokens::None;
+
     default:
-      token = outer.switchState(outer.startState, Tokens::Ident);
-      break;
+      outer.state = outer.startState;
+      return Tokens::Ident;
   }
-  return Tokens::None;
 }
 
 Tokens::Token Automat::SignState::accept(const char c)
 {
-  (void) c;
-  return Tokens::None;
+  switch(c) {
+    case '*':
+      outer.state = outer.commentState;
+      return Tokens::Ignore;
+    case ':':
+      if (outer.lastSign == '<') {
+        outer.lastSign = 0;
+        outer.state = outer.smallerColonState;
+        return Tokens::None;
+      }
+      return Tokens::tokenOf(c);
+    case '=':
+      if (outer.lastSign == ':') {
+        outer.lastSign = 0;
+        outer.state = outer.colonEqualsState;
+        return Tokens::None;
+      }
+      return Tokens::tokenOf(c);
+    default:
+      outer.state = outer.startState;
+      return Tokens::tokenOf(c);
+  }
 }
 
 Tokens::Token Automat::IntState::accept(const char c)
 {
-  (void) c;
-  return Tokens::None;
+  switch(c) {
+    case '0': case '1': case '2': case '3': case '4': case '5':
+    case '6': case '7': case '8': case '9':
+      return Tokens::None;
+    default:
+      outer.state = outer.startState;
+      return Tokens::Int;
+  }
 }
 
-Tokens::Token Automat::switchState(Automat::State& newState, Tokens::Token newToken)
+Tokens::Token Automat::CommentState::accept(const char c)
 {
-  if (&lastState != &newState) {
-    lastState = newState;
-    acceptedSigns = 1;
-    auto t = lastToken;
-    lastToken = newToken;
-    return t;
+  switch(c) {
+    case '*':
+      outer.state = outer.commentEndState;
+      return Tokens::Ignore;
+    default:
+      return Tokens::None;
   }
-  else {
-    acceptedSigns += 1;
-    return Tokens::None;
+}
+
+Tokens::Token Automat::CommentEndState::accept(const char c)
+{
+  switch(c) {
+    case '/':
+      outer.state = outer.startState;
+    default:
+      outer.state = outer.commentState;
   }
+  return Tokens::Ignore;
+}
+
+Tokens::Token Automat::SmallerColonState::accept(const char c)
+{
+  switch(c) {
+    case '=':
+      outer.state = outer.colonEqualsState;
+      return Tokens::Smaller;
+    case '>':
+      outer.state = outer.startState;
+      return Tokens::SmallerColonGreater;
+    default:
+      outer.state = outer.startState;
+      return Tokens::Error;
+  }
+}
+
+Tokens::Token Automat::ColonEqualsState::accept(const char c)
+{
+  (void) c;
+  outer.state = outer.startState;
+  return Tokens::ColonEquals;
 }
 
 Tokens::Token Automat::accept(const char c)
 {
-  lastState.accept(c);
-  Tokens::Token token;
-/*  switch(c) {
-    case ' ': case '\t':
-      token = switchState(StartState::instance(), Tokens::Ignore);
-      break;
-    case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
-    case 'g': case 'h': case 'i': case 'j': case 'k': case 'l':
-    case 'm': case 'n': case 'o': case 'p': case 'q': case 'r':
-    case 's': case 't': case 'u': case 'v': case 'w': case 'x':
-    case 'y': case 'z':
-    case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
-    case 'G': case 'H': case 'I': case 'J': case 'K': case 'L':
-    case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R':
-    case 'S': case 'T': case 'U': case 'V': case 'W': case 'X':
-    case 'Y': case 'Z':
-      token = switchState(IdentState::instance(), Tokens::Ident);
-      break;
-
-    case '0': case '1': case '2': case '3': case '4': case '5':
-    case '6': case '7': case '8': case '9':
-      token = switchState(IntState::instance(), Tokens::Int);
-      break;
-
-    case '+':
-      token = switchState(SignState::instance(), Tokens::Plus);
-      break;
-
-    case '-':
-      token = switchState(SignState::instance(), Tokens::Minus);
-      break;
-
-    case '/':
-      break;
-
-    case '*':
-      break;
-
-    case '<':
-      break;
-
-    case '>':
-      break;
-
-    case '=':
-      break;
-
-    case ':':
-      break;
-
-    case '!':
-      break;
-
-    case '&':
-      break;
-
-    case ';':
-      break;
-
-    case '(':
-      break;
-
-    case ')':
-      break;
-
-    case '{':
-      break;
-
-    case '}':
-      break;
-
-    case '[':
-      break;
-
-    case ']':
-      break;
-  }*/
-  return token;
+  return state.accept(c);
 }
