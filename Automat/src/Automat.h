@@ -9,6 +9,8 @@ public:
     startState(*new StartState(*this)),
     identState(*new IdentState(*this)),
     signState(*new SignState(*this)),
+    smallerState(*new SmallerState(*this)),
+    colonState(*new ColonState(*this)),
     intState(*new IntState(*this)),
     commentState(*new CommentState(*this)),
     commentEndState(*new CommentEndState(*this)),
@@ -21,6 +23,8 @@ public:
     delete &startState;
     delete &identState;
     delete &signState;
+    delete &smallerState;
+    delete &colonState;
     delete &intState;
     delete &commentState;
     delete &commentEndState;
@@ -65,6 +69,18 @@ private:
     Tokens::Token accept(const char c) override;
   };
 
+  class SmallerState final : public State {
+  public:
+    SmallerState(Automat& outer): State(outer) {}
+    Tokens::Token accept(const char c) override;
+  };
+
+  class ColonState final : public State {
+  public:
+    ColonState(Automat& outer): State(outer) {}
+    Tokens::Token accept(const char c) override;
+  };
+
   class IntState final : public State {
   public:
     IntState(Automat& outer): State(outer) {}
@@ -98,13 +114,14 @@ private:
   StartState &startState;
   IdentState &identState;
   SignState &signState;
+  SmallerState &smallerState;
+  ColonState &colonState;
   IntState &intState;
   CommentState &commentState;
   CommentEndState &commentEndState;
   SmallerColonState &smallerColonState;
   ColonEqualsState &colonEqualsState;
 
-  unsigned char lastSign;
   State &state;
 };
 

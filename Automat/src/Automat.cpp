@@ -23,10 +23,17 @@ Tokens::Token Automat::StartState::accept(const char c)
       outer.state = outer.intState;
       return Tokens::None;
 
-    case '+': case '-': case '/': case '*': case '<': case '>':
-    case '=': case '!': case '&': case ';': case '(': case ')':
-    case '{': case '}': case '[': case ']': case ':':
-      outer.lastSign = c;
+    case '<':
+      outer.state = outer.smallerState;
+      return Tokens::None;
+
+    case ':':
+      outer.state = outer.colonState;
+      return Tokens::None;
+
+    case '+': case '-': case '/': case '*': case '>': case '=':
+    case '!': case '&': case ';': case '(': case ')': case '{':
+    case '}': case '[': case ']':
       outer.state = outer.signState;
       return Tokens::None;
 
@@ -64,23 +71,33 @@ Tokens::Token Automat::SignState::accept(const char c)
     case '*':
       outer.state = outer.commentState;
       return Tokens::Ignore;
-    case ':':
-      if (outer.lastSign == '<') {
-        outer.lastSign = 0;
-        outer.state = outer.smallerColonState;
-        return Tokens::None;
-      }
-      return Tokens::tokenOf(c);
-    case '=':
-      if (outer.lastSign == ':') {
-        outer.lastSign = 0;
-        outer.state = outer.colonEqualsState;
-        return Tokens::None;
-      }
-      return Tokens::tokenOf(c);
     default:
       outer.state = outer.startState;
       return Tokens::tokenOf(c);
+  }
+}
+
+Tokens::Token Automat::SmallerState::accept(const char c)
+{
+  switch(c) {
+    case ':':
+      outer.state = outer.smallerColonState;
+      return Tokens::None;
+    default:
+      outer.state = outer.startState;
+      return Tokens::Smaller;
+  }
+}
+
+Tokens::Token Automat::ColonState::accept(const char c)
+{
+  switch(c) {
+    case '=':
+      outer.state = outer.colonEqualsState;
+      return Tokens::None;
+    default:
+      outer.state = outer.startState;
+      return Tokens::Error;
   }
 }
 
