@@ -5,7 +5,7 @@
 
 class Automat final {
 public:
-	explicit Automat():
+  explicit Automat():
     startState(*new StartState(*this)),
     identState(*new IdentState(*this)),
     signState(*new SignState(*this)),
@@ -19,7 +19,7 @@ public:
     state(startState)
   {}
 
-	~Automat() {
+  ~Automat() {
     delete &startState;
     delete &identState;
     delete &signState;
@@ -30,7 +30,6 @@ public:
     delete &commentEndState;
     delete &smallerColonState;
     delete &colonEqualsState;
-    delete &state;
   }
 
   Tokens::Token accept(const char c);
@@ -38,9 +37,7 @@ public:
 private:
   class State {
   public:
-    virtual ~State() {
-      delete &outer;
-    }
+    virtual ~State() {}
     State(Automat& outer): outer(outer) {}
     virtual Tokens::Token accept(const char c) = 0;
     inline const State& operator=(const State& state) {

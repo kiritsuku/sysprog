@@ -3,13 +3,8 @@
 
 #include <string.h>
 
-class Tokens {
+class Tokens final {
 public:
-  static Tokens& instance() {
-    static Tokens ins;
-    return ins;
-  }
-
   enum Token {
     None = 0,
     Ignore,
@@ -41,53 +36,32 @@ public:
     While
   };
 
+  static Tokens& instance();
+
   static const unsigned MaxToken = static_cast<unsigned>(While);
 
-  static Token tokenOf(unsigned char c) {
-    switch(c) {
-      case '+': return Plus;
-      case '-': return Minus;
-      case '/': return Div;
-      case '*': return Mul;
-      case '<': return Smaller;
-      case '>': return Greater;
-      case '=': return Equals;
-      case '!': return Bang;
-      case '&': return And;
-      case ';': return Semi;
-      case '(': return LParen;
-      case ')': return RParen;
-      case '{': return LBrace;
-      case '}': return RBrace;
-      case '[': return LBracket;
-      case ']': return RBracket;
-      default : return Error;
-    }
-  }
+  Token tokenOf(unsigned char c);
 
-  unsigned textLen(const Token token) {
-    auto repr = tokenString[static_cast<unsigned>(token)];
-    return strlen(repr);
-  }
-
-  const char* text(const Token token) {
-    return tokenString[static_cast<unsigned>(token)];
-  }
+  /**
+   * Checks if `text` is a keyword. If this is the case the corresponding
+   * token is returned. Otherwise `Token::None` is returned.
+   */
+  Token keyword(const char *text);
+  unsigned textLen(const Token token);
+  const char* text(const Token token);
 
 private:
   const char* tokenString[MaxToken+1];
 
-  void enter(Token token, const char* repr) {
-    tokenString[static_cast<unsigned>(token)] = repr;
-  }
+  void enter(Token token, const char* repr);
 
   Tokens() {
     enter(None, "<none>");
     enter(Ignore, "<ignore>");
     enter(Error, "<error>");
     enter(Eof, "<eof>");
-    enter(Int, "<intlit>");
-    enter(Ident, "<stringlit>");
+    enter(Int, "<int>");
+    enter(Ident, "<ident>");
 
     enter(Plus, "+");
     enter(Minus, "-");

@@ -1,23 +1,27 @@
 #ifndef BUFFER_H_
 #define BUFFER_H_
 
-static const unsigned BUFFER_SIZE = 16;
-
-class Buffer {
+class Buffer final {
 private:
+  static const unsigned BUFFER_SIZE = 512;
+
   const char* fileName;
   char curBuffer[BUFFER_SIZE];
   //char* prevBuffer;
   unsigned off;
 public:
-	explicit Buffer(const char* fileName): fileName(fileName), curBuffer(), off(0) {}
+	explicit Buffer(const char* fileName):
+    fileName(fileName),
+    curBuffer(),
+    off(0) {}
   ~Buffer() {}
 
-  virtual char nextChar();
-  virtual int offset();
-  virtual char* region(const unsigned int offset);
+  char nextChar();
+  char currentChar();
+  int offset();
+  char* range(const unsigned offset);
 private:
-  virtual void readFile(const char* name);
+  void readFile(const char* name);
 };
 
-#endif /* BUFFER_H_ */
+#endif

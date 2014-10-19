@@ -1,17 +1,28 @@
-/*
- * Scanner.h
- *
- *  Created on: Sep 26, 2012
- *      Author: knad0001
- */
-
 #ifndef SCANNER_H_
 #define SCANNER_H_
 
-class Scanner {
+#include "Token.h"
+#include "Automat.h"
+#include "Buffer.h"
+
+static const unsigned SCANNER_BUFFER_SIZE = 100;
+
+class Scanner final {
 public:
-	Scanner();
-	virtual ~Scanner();
+	Scanner(Automat &automat, Buffer &buffer):
+    automat(automat),
+    buffer(buffer),
+    lastStart(0) {}
+	~Scanner() {}
+
+  Tokens::Token nextToken();
+
+private:
+  Automat &automat;
+  Buffer &buffer;
+  unsigned lastStart;
+
+  Tokens::Token acceptChar(const char c);
 };
 
-#endif /* SCANNER_H_ */
+#endif

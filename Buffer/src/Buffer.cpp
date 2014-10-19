@@ -61,17 +61,28 @@ void Buffer::readFile(const char* name)
 char Buffer::nextChar()
 {
   if (off == 0) {
-    readFile(this->fileName);
+    memset(curBuffer, 0, BUFFER_SIZE);
+    strcpy(curBuffer, "Hellow world!\nHow are you?\n\nI'm fine");
+    //readFile(this->fileName);
   }
-  return 0;
+  auto next = off < BUFFER_SIZE ? curBuffer[off] : 0;
+  off += 1;
+  return next;
+}
+char Buffer::currentChar()
+{
+  return curBuffer[off];
 }
 
 int Buffer::offset()
 {
-  return 0;
+  return off;
 }
 
-char* Buffer::region(const unsigned int offset)
+char* Buffer::range(const unsigned start)
 {
-  return nullptr;
+  auto len = off-start;
+  auto ret = new char[len];
+  strncpy(ret, curBuffer+start, len);
+  return ret;
 }

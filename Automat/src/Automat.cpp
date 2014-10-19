@@ -73,7 +73,7 @@ Tokens::Token Automat::SignState::accept(const char c)
       return Tokens::Ignore;
     default:
       outer.state = outer.startState;
-      return Tokens::tokenOf(c);
+      return Tokens::instance().tokenOf(c);
   }
 }
 
