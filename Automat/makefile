@@ -2,7 +2,7 @@
 #		Targets zum Bauen des Tests
 #
 CC = g++
-FLAGS = -W -Wall -g -std=c++11
+FLAGS = -W -Wall -Wextra -g -std=c++11
 LIBFLAGS = -g -std=c++11
 
 # Linken der Object-files, abhaengig von AutomatTarget und TestAutomatTarget

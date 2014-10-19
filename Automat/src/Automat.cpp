@@ -1,5 +1,43 @@
 #include "Automat.h"
 
+Automat::Automat():
+  startState(new StartState(*this)),
+  identState(new IdentState(*this)),
+  signState(new SignState(*this)),
+  smallerState(new SmallerState(*this)),
+  colonState(new ColonState(*this)),
+  intState(new IntState(*this)),
+  commentState(new CommentState(*this)),
+  commentEndState(new CommentEndState(*this)),
+  smallerColonState(new SmallerColonState(*this)),
+  colonEqualsState(new ColonEqualsState(*this)),
+  state(startState)
+{
+}
+
+Automat::~Automat()
+{
+  delete startState;
+  delete identState;
+  delete signState;
+  delete smallerState;
+  delete colonState;
+  delete intState;
+  delete commentState;
+  delete commentEndState;
+  delete smallerColonState;
+  delete colonEqualsState;
+}
+
+Automat::State::State(Automat &outer):
+  outer(outer)
+{
+}
+
+Automat::State::~State()
+{
+}
+
 Tokens::Token Automat::StartState::accept(const char c)
 {
   switch(c) {
@@ -159,5 +197,5 @@ Tokens::Token Automat::ColonEqualsState::accept(const char c)
 
 Tokens::Token Automat::accept(const char c)
 {
-  return state.accept(c);
+  return state->accept(c);
 }

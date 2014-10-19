@@ -5,6 +5,15 @@
 #include <stdarg.h>
 #include "Buffer.h"
 
+Buffer::Buffer(const char* fileName):
+  fileName(fileName),
+  curBuffer(),
+  off(0) {
+    fillBuffer();
+  }
+
+Buffer::~Buffer() {}
+
 void printErr(const char* format, ...)
 {
   // http://stackoverflow.com/questions/1056411/how-to-pass-variable-number-of-arguments-to-printf-sprintf
@@ -60,13 +69,8 @@ void Buffer::readFile(const char* name)
 
 char Buffer::nextChar()
 {
-  if (off == 0) {
-    memset(curBuffer, 0, BUFFER_SIZE);
-    strcpy(curBuffer, "Hellow world!\nHow are you?\n\nI'm fine");
-    //readFile(this->fileName);
-  }
-  auto next = off < BUFFER_SIZE ? curBuffer[off] : 0;
   off += 1;
+  auto next = off < BUFFER_SIZE ? curBuffer[off] : 0;
   return next;
 }
 char Buffer::currentChar()
@@ -85,4 +89,11 @@ char* Buffer::range(const unsigned start)
   auto ret = new char[len];
   strncpy(ret, curBuffer+start, len);
   return ret;
+}
+
+void Buffer::fillBuffer()
+{
+  memset(curBuffer, 0, BUFFER_SIZE);
+  strcpy(curBuffer, "Hellow world!\nHow are you?\n\nI'm fine");
+  //readFile(this->fileName);
 }

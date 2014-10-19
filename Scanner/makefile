@@ -1,6 +1,6 @@
 
 CC = g++
-FLAGS = -W -Wall -g -std=c++11
+FLAGS = -W -Wall -Wextra -g -std=c++11
 
 SRCDIR = src
 OBJDIR = debug
@@ -42,7 +42,7 @@ OBJSFORSCANNERLIB =  \
 # Variante  mit guten Kenntnissen
 # $^ liste der abhaengigkeiten
 makeTestScanner: $(OBJS)
-	$(CC) $(FLAGS) $^ -I../Automat/src -L../sharedlib  -lAutomat  -lBuffer -lSymboltable -o $(BINDIR)/ScannerTest
+	$(CC) $(FLAGS) $^ -I../Automat/src -I../Buffer/src -L../sharedlib  -lAutomat  -lBuffer -lSymboltable -o $(BINDIR)/ScannerTest
 
 # $@ name des object files
 # $< erste abhaengigkeit

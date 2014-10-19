@@ -1,7 +1,7 @@
 # Definition der Variablen
 
 CC = g++
-FLAGS = -W -Wall -g -std=c++11
+FLAGS = -W -Wall -Wextra -g -std=c++11
 LIBFLAGS = -g -std=c++11
 
 SRCDIR = src

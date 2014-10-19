@@ -10,11 +10,8 @@ private:
   //char* prevBuffer;
   unsigned off;
 public:
-	explicit Buffer(const char* fileName):
-    fileName(fileName),
-    curBuffer(),
-    off(0) {}
-  ~Buffer() {}
+	explicit Buffer(const char* fileName);
+  ~Buffer();
 
   char nextChar();
   char currentChar();
@@ -22,6 +19,7 @@ public:
   char* range(const unsigned offset);
 private:
   void readFile(const char* name);
+  void fillBuffer();
 };
 
 #endif

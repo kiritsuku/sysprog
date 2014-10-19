@@ -18,6 +18,7 @@ Tokens::Token Scanner::acceptChar(const char c)
       auto ident = buffer.range(lastStart);
       auto kw = Tokens::instance().keyword(ident);
       lastStart = buffer.offset();
+      delete[] ident;
 
       if (kw != Tokens::None)
         return kw;
