@@ -1,33 +1,62 @@
+#include <string.h>
 #include "Token.h"
 
-Tokens& Tokens::instance()
+Tokens::Token::Token()
 {
-  static Tokens ins;
-  return ins;
 }
 
-unsigned Tokens::textLen(const Token token)
+Tokens::Token::~Token()
 {
-  auto repr = tokenString[static_cast<unsigned>(token)];
-  return strlen(repr);
 }
 
-const char* Tokens::text(const Token token)
+unsigned Tokens::Token::textLen()
 {
-  return tokenString[static_cast<unsigned>(token)];
+  return strlen(text());
 }
 
-Tokens::Token Tokens::keyword(const char *text)
+Tokens::NoneToken *const Tokens::None = new NoneToken();
+Tokens::IgnoreToken *const Tokens::Ignore = new IgnoreToken();
+Tokens::ErrorToken *const Tokens::Error = new ErrorToken();
+Tokens::EofToken *const Tokens::Eof = new EofToken();
+Tokens::IntToken *const Tokens::Int = new IntToken();
+Tokens::StrToken *const Tokens::Str = new StrToken();
+Tokens::PlusToken *const Tokens::Plus = new PlusToken();
+Tokens::MinusToken *const Tokens::Minus = new MinusToken();
+Tokens::DivToken *const Tokens::Div = new DivToken();
+Tokens::MulToken *const Tokens::Mul = new MulToken();
+Tokens::SmallerToken *const Tokens::Smaller = new SmallerToken();
+Tokens::GreaterToken *const Tokens::Greater = new GreaterToken();
+Tokens::EqualsToken *const Tokens::Equals = new EqualsToken();
+Tokens::ColonEqualsToken *const Tokens::ColonEquals = new ColonEqualsToken();
+Tokens::SmallerColonGreaterToken *const Tokens::SmallerColonGreater = new SmallerColonGreaterToken();
+Tokens::BangToken *const Tokens::Bang = new BangToken();
+Tokens::AndToken *const Tokens::And = new AndToken();
+Tokens::SemiToken *const Tokens::Semi = new SemiToken();
+Tokens::LParenToken *const Tokens::LParen = new LParenToken();
+Tokens::RParenToken *const Tokens::RParen = new RParenToken();
+Tokens::LBraceToken *const Tokens::LBrace = new LBraceToken();
+Tokens::RBraceToken *const Tokens::RBrace = new RBraceToken();
+Tokens::LBracketToken *const Tokens::LBracket = new LBracketToken();
+Tokens::RBracketToken *const Tokens::RBracket = new RBracketToken();
+Tokens::IfToken *const Tokens::If = new IfToken();
+Tokens::WhileToken *const Tokens::While = new WhileToken();
+
+Tokens::IdentToken *Tokens::createIdent(unsigned pos, char *sym)
+{
+  return new IdentToken(pos, sym);
+}
+
+Tokens::Token *Tokens::keyword(const char *text)
 {
   if (strcmp(text, "if") == 0 || strcmp(text, "IF") == 0)
-    return Tokens::If;
+    return If;
   else if (strcmp(text, "while") == 0 || strcmp(text, "WHILE") == 0)
-    return Tokens::While;
+    return While;
   else
-    return Tokens::None;
+    return None;
 }
 
-Tokens::Token Tokens::tokenOf(unsigned char c)
+Tokens::Token *Tokens::tokenOf(unsigned char c)
 {
   switch(c) {
     case '+': return Plus;
@@ -48,10 +77,5 @@ Tokens::Token Tokens::tokenOf(unsigned char c)
     case ']': return RBracket;
     default : return Error;
   }
-}
-
-void Tokens::enter(Token token, const char* repr)
-{
-  tokenString[static_cast<unsigned>(token)] = repr;
 }
 

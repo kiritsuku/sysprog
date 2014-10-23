@@ -38,11 +38,12 @@ Automat::State::~State()
 {
 }
 
-Tokens::Token Automat::StartState::accept(const char c)
+Tokens::Token *Automat::StartState::accept(const char c)
 {
   switch(c) {
     case ' ': case '\t': case '\n':
       return Tokens::Ignore;
+
     case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
     case 'g': case 'h': case 'i': case 'j': case 'k': case 'l':
     case 'm': case 'n': case 'o': case 'p': case 'q': case 'r':
@@ -76,14 +77,14 @@ Tokens::Token Automat::StartState::accept(const char c)
     case '+': case '-': case '*': case '>': case '=':
     case '!': case '&': case ';': case '(': case ')': case '{':
     case '}': case '[': case ']':
-      return Tokens::instance().tokenOf(c);
+      return Tokens::tokenOf(c);
 
     default:
       return Tokens::Error;
   }
 }
 
-Tokens::Token Automat::IdentState::accept(const char c)
+Tokens::Token *Automat::IdentState::accept(const char c)
 {
   switch(c) {
     case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
@@ -102,11 +103,11 @@ Tokens::Token Automat::IdentState::accept(const char c)
 
     default:
       outer.state = outer.startState;
-      return Tokens::Ident;
+      return Tokens::Str;
   }
 }
 
-Tokens::Token Automat::SignState::accept(const char c)
+Tokens::Token *Automat::SignState::accept(const char c)
 {
   switch(c) {
     case '*':
@@ -114,11 +115,11 @@ Tokens::Token Automat::SignState::accept(const char c)
       return Tokens::Ignore;
     default:
       outer.state = outer.startState;
-      return Tokens::instance().tokenOf('/');
+      return Tokens::tokenOf('/');
   }
 }
 
-Tokens::Token Automat::SmallerState::accept(const char c)
+Tokens::Token *Automat::SmallerState::accept(const char c)
 {
   switch(c) {
     case ':':
@@ -130,7 +131,7 @@ Tokens::Token Automat::SmallerState::accept(const char c)
   }
 }
 
-Tokens::Token Automat::ColonState::accept(const char c)
+Tokens::Token *Automat::ColonState::accept(const char c)
 {
   switch(c) {
     case '=':
@@ -142,7 +143,7 @@ Tokens::Token Automat::ColonState::accept(const char c)
   }
 }
 
-Tokens::Token Automat::IntState::accept(const char c)
+Tokens::Token *Automat::IntState::accept(const char c)
 {
   switch(c) {
     case '0': case '1': case '2': case '3': case '4': case '5':
@@ -154,7 +155,7 @@ Tokens::Token Automat::IntState::accept(const char c)
   }
 }
 
-Tokens::Token Automat::CommentState::accept(const char c)
+Tokens::Token *Automat::CommentState::accept(const char c)
 {
   switch(c) {
     case '*':
@@ -165,7 +166,7 @@ Tokens::Token Automat::CommentState::accept(const char c)
   }
 }
 
-Tokens::Token Automat::CommentEndState::accept(const char c)
+Tokens::Token *Automat::CommentEndState::accept(const char c)
 {
   switch(c) {
     case '/':
@@ -176,7 +177,7 @@ Tokens::Token Automat::CommentEndState::accept(const char c)
   return Tokens::Ignore;
 }
 
-Tokens::Token Automat::SmallerColonState::accept(const char c)
+Tokens::Token *Automat::SmallerColonState::accept(const char c)
 {
   switch(c) {
     case '=':
@@ -191,14 +192,14 @@ Tokens::Token Automat::SmallerColonState::accept(const char c)
   }
 }
 
-Tokens::Token Automat::ColonEqualsState::accept(const char c)
+Tokens::Token *Automat::ColonEqualsState::accept(const char c)
 {
   (void) c;
   outer.state = outer.startState;
   return Tokens::ColonEquals;
 }
 
-Tokens::Token Automat::accept(const char c)
+Tokens::Token *Automat::accept(const char c)
 {
   return state->accept(c);
 }

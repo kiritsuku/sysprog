@@ -42,13 +42,12 @@ OBJSFORSCANNERLIB =  \
 # Variante  mit guten Kenntnissen
 # $^ liste der abhaengigkeiten
 makeTestScanner: $(OBJS)
-	$(CC) $(FLAGS) $^ -I../Automat/src -I../Buffer/src -L../sharedlib  -lAutomat  -lBuffer -lSymboltable -o $(BINDIR)/ScannerTest
+	$(CC) $(FLAGS) $^ -I../Automat/src -I../Buffer/src -I../Symboltable/src -L../sharedlib -lAutomat -lBuffer -lSymboltable -o $(BINDIR)/ScannerTest
 
 # $@ name des object files
 # $< erste abhaengigkeit
 $(OBJDIR)/%.o :  $(SRCDIR)/%.cpp
-	@echo "g++ $*.cpp"
-	$(CC) $(FLAGS) -c -I../Automat/src -I../Buffer/src -L../sharedlib -lAutomat -lBuffer -o $@  $<
+	$(CC) $(FLAGS) -c -I../Automat/src -I../Buffer/src -I../Symboltable/src -L../sharedlib -lAutomat -lBuffer -lSymboltable -o $@  $<
 
 # loeschen aller files im verzeichnis $(OBJDIR) und $(LIBDIR) und neu bauen
 cleanScanner:

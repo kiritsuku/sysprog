@@ -1,52 +1,53 @@
+#include <string.h>
 #include "Scanner.h"
 
-Tokens::Token Scanner::acceptChar(const char c)
+Tokens::Token *Scanner::acceptChar(const char c)
 {
   auto t = automat.accept(c);
-  switch(t) {
-    case Tokens::Eof:
-      return t;
 
-    case Tokens::Ignore:
-      lastStart = buffer.offset();
-      return acceptChar(buffer.nextChar());
+  if (t == Tokens::Eof)
+    return t;
 
-    case Tokens::None:
-      return acceptChar(buffer.nextChar());
+  else if (t == Tokens::Ignore) {
+    lastStart = buffer.offset();
+    return acceptChar(buffer.nextChar());
+  }
 
-    case Tokens::Int: {
-      auto strvalue = buffer.range(lastStart);
-      lastStart += strlen(strvalue);
-      buffer.setOffset(lastStart);
-      // create int value here
-      delete[] strvalue;
-      return Tokens::Int;
+  else if (t == Tokens::None)
+    return acceptChar(buffer.nextChar());
+
+  else if (t == Tokens::Int) {
+    auto strvalue = buffer.range(lastStart);
+    lastStart += strlen(strvalue);
+    buffer.setOffset(lastStart);
+    // TODO create int value here
+    delete[] strvalue;
+    return Tokens::Int;
+  }
+
+  else if (t == Tokens::Str) {
+    auto ident = buffer.range(lastStart);
+    auto kw = Tokens::keyword(ident);
+    lastStart = buffer.offset();
+    delete[] ident;
+
+    if (kw != Tokens::None)
+      return kw;
+    else {
+      // TODO create symbol in symboltable
+      return Tokens::Str;
     }
+  }
 
-    case Tokens::Ident: {
-      auto ident = buffer.range(lastStart);
-      auto kw = Tokens::instance().keyword(ident);
-      lastStart = buffer.offset();
-      delete[] ident;
-
-      if (kw != Tokens::None)
-        return kw;
-      else {
-        // TODO create symbol in symboltable
-        return Tokens::Ident;
-      }
-    }
-
-    default: {
-      auto len = Tokens::instance().textLen(t);
-      lastStart += len;
-      buffer.setOffset(lastStart);
-      return t;
-    }
+  else {
+    auto len = t->textLen();
+    lastStart += len;
+    buffer.setOffset(lastStart);
+    return t;
   }
 }
 
-Tokens::Token Scanner::nextToken()
+Tokens::Token *Scanner::nextToken()
 {
   auto c = buffer.currentChar();
   if (c == 0)
