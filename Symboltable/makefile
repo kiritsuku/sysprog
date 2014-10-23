@@ -1,10 +1,11 @@
 # Definition der Variablen
+CC = g++
+FLAGS = -W -Wall -Wextra -g -std=c++11
+LIBFLAGS = -g -std=c++11
 
 SRCDIR = src
 OBJDIR = debug
-
 BINDIR = debug
-
 LIBDIR = lib
 
 SHAREDLIB = ../sharedlib
@@ -31,10 +32,10 @@ OBJSFORSYMBOLTABLELIB =  \
 #makeTestSymboltable: $(OBJDIR)/Symboltable.o $(OBJDIR)/TestSymboltable.o
 #	g++ -g $(OBJDIR)/Symboltable.o $(OBJDIR)/TestSymboltable.o -o $(BINDIR)/SymboltableTest
 #
-#	
+#
 ## compilieren der Source-files
 #
-#$(OBJDIR)/Symboltable.o :  $(SRCDIR)/Symboltable.cpp 
+#$(OBJDIR)/Symboltable.o :  $(SRCDIR)/Symboltable.cpp
 #	@echo "g++ $*.cpp"
 #	g++ -g  -c -Wall  -o $(OBJDIR)/Symboltable.o  $(SRCDIR)/Symboltable.cpp
 #
@@ -50,16 +51,15 @@ makeTestSymboltable: SymboltableTest
 
 
 SymboltableTest: $(OBJS)
-	g++ -g $^ -o $(BINDIR)/SymboltableTest
-	
+	$(CC) $(FLAGS) $^ -o $(BINDIR)/SymboltableTest
+
 # $^ liste der abhaengigkeiten
 
 
-$(OBJDIR)/%.o :  $(SRCDIR)/%.cpp 
-	@echo "g++ $*.cpp"
-	g++ -g  -c -Wall  -o $@  $<
+$(OBJDIR)/%.o :  $(SRCDIR)/%.cpp
+	$(CC) $(FLAGS) -c -o $@  $<
 
-# 
+#
 # $@ name des object files
 # $< erste abhaengigkeit
 
@@ -70,28 +70,27 @@ cleanSymboltable:
 	rm -rf $(OBJDIR)/*
 	rm -rf $(LIBDIR)/*
 	$(MAKE) makeTestSymboltable
-	
-#	
+
+#
 # erstellen der shared library
 #
 
 #SymboltableLib:$(LIBDIR)/Symboltable.o
-#		g++ -shared  -o $(SHAREDLIB)/libSymboltable.so $(LIBDIR)/Symboltable.o 
+#		g++ -shared  -o $(SHAREDLIB)/libSymboltable.so $(LIBDIR)/Symboltable.o
 #
-#	
-#$(LIBDIR)/Symboltable.o :  $(SRCDIR)/Symboltable.cpp 
+#
+#$(LIBDIR)/Symboltable.o :  $(SRCDIR)/Symboltable.cpp
 ##	@mkdir -p `dirname $(OBJDIR)/$*.o`
 #	@echo "g++ $*.cpp"
-#	g++ -g  -c -fPIC  -o $(LIBDIR)/Symboltable.o  $(SRCDIR)/Symboltable.cpp 
+#	g++ -g  -c -fPIC  -o $(LIBDIR)/Symboltable.o  $(SRCDIR)/Symboltable.cpp
 #
 
 
 SymboltableLib:$(OBJSFORSYMBOLTABLELIB)
-		g++ -shared  -o $(SHAREDLIB)/libSymboltable.so $^ 
+		$(CC) $(LIBFLAGS) -shared -o $(SHAREDLIB)/libSymboltable.so $^
 
-	
-$(LIBDIR)/%.o :  $(SRCDIR)/%.cpp 
+
+$(LIBDIR)/%.o :  $(SRCDIR)/%.cpp
 #	@mkdir -p `dirname $(OBJDIR)/$*.o`
-	@echo "g++ $*.cpp"
-	g++ -g  -c -fPIC  -o $@  $<
+	$(CC) $(LIBFLAGS) -c -fPIC -o $@ $<
 
