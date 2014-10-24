@@ -98,6 +98,6 @@ void Buffer::setOffset(const unsigned offset)
 void Buffer::fillBuffer()
 {
   memset(curBuffer, 0, BUFFER_SIZE);
-  strcpy(curBuffer, "hello \n\nworld\n1+1*2:=5<:>hel2lo=5");
+  strcpy(curBuffer, "hello \n\nworld\n100+1*235761:=556<:>hel22lo=598");
   //readFile(this->fileName);
 }

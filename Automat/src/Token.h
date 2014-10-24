@@ -12,6 +12,7 @@ public:
     virtual const char *text() = 0;
     virtual unsigned textLen();
     virtual bool isIdent();
+    virtual bool isInt();
   };
 
   class NoneToken final : public Token {
@@ -180,6 +181,19 @@ public:
     Symbol &sym;
   };
 
+  class NumberToken final : public Token {
+  public:
+    NumberToken(unsigned pos, unsigned value, char *strvalue);
+    ~NumberToken();
+    const char *text() override;
+    bool isInt() override;
+
+    const unsigned pos;
+    const unsigned value;
+  private:
+    const char *strvalue;
+  };
+
   static NoneToken *const None;
   static IgnoreToken *const Ignore;
   static ErrorToken *const Error;
@@ -208,6 +222,7 @@ public:
   static WhileToken *const While;
 
   static IdentToken *createIdent(unsigned pos, Symbol &sym);
+  static NumberToken *createNumber(unsigned pos, unsigned value, char *strvalue);
 
   static Token *tokenOf(unsigned char c);
 

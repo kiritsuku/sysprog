@@ -1,4 +1,6 @@
+#include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include "Scanner.h"
 
 Tokens::Token *Scanner::acceptChar(const char c)
@@ -24,8 +26,11 @@ Tokens::Token *Scanner::acceptChar(const char c)
     buffer.range(strvalue, start, len);
     lastStart += strlen(strvalue);
     buffer.setOffset(lastStart);
-    // TODO create int value here
-    return Tokens::Int;
+
+    auto value = strtol(strvalue, 0, 10);
+    if (value == 0 && errno == ERANGE)
+      return Tokens::Error;
+    return Tokens::createNumber(start, value, strvalue);
   }
 
   else if (t == Tokens::Str) {

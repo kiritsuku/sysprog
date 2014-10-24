@@ -19,6 +19,11 @@ bool Tokens::Token::isIdent()
   return false;
 }
 
+bool Tokens::Token::isInt()
+{
+  return false;
+}
+
 Tokens::NoneToken *const Tokens::None = new NoneToken();
 Tokens::IgnoreToken *const Tokens::Ignore = new IgnoreToken();
 Tokens::ErrorToken *const Tokens::Error = new ErrorToken();
@@ -49,6 +54,11 @@ Tokens::WhileToken *const Tokens::While = new WhileToken();
 Tokens::IdentToken *Tokens::createIdent(unsigned pos, Symbol &sym)
 {
   return new IdentToken(pos, sym);
+}
+
+Tokens::NumberToken *Tokens::createNumber(unsigned pos, unsigned value, char *strvalue)
+{
+  return new NumberToken(pos, value, strvalue);
 }
 
 Tokens::Token *Tokens::keyword(const char *text)
@@ -84,3 +94,26 @@ Tokens::Token *Tokens::tokenOf(unsigned char c)
   }
 }
 
+Tokens::NumberToken::NumberToken(unsigned pos, unsigned value, char *strvalue):
+  Tokens::Token(),
+  pos(pos),
+  value(value)
+{
+  char *s = new char[strlen(strvalue)+1];
+  strcpy(s, strvalue);
+  this->strvalue = s;
+}
+Tokens::NumberToken::~NumberToken()
+{
+  delete[] strvalue;
+}
+
+const char *Tokens::NumberToken::text()
+{
+  return strvalue;
+}
+
+bool Tokens::NumberToken::isInt()
+{
+  return true;
+}

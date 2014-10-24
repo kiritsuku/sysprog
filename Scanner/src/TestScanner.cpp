@@ -16,7 +16,7 @@ int main()
   auto t = scanner.nextToken();
   while (t != Tokens::Eof && t != Tokens::Error) {
     printf("token: %s\n", t->text());
-    if (t->isIdent())
+    if (t->isIdent() || t->isInt())
       delete t;
     t = scanner.nextToken();
   }
