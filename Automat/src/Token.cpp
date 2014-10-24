@@ -46,7 +46,7 @@ Tokens::RBracketToken *const Tokens::RBracket = new RBracketToken();
 Tokens::IfToken *const Tokens::If = new IfToken();
 Tokens::WhileToken *const Tokens::While = new WhileToken();
 
-Tokens::IdentToken *Tokens::createIdent(unsigned pos, char *sym)
+Tokens::IdentToken *Tokens::createIdent(unsigned pos, Symbol &sym)
 {
   return new IdentToken(pos, sym);
 }

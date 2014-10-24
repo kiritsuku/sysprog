@@ -1,6 +1,8 @@
 #ifndef TOKEN_H_
 #define TOKEN_H_
 
+#include <Symboltable.h>
+
 class Tokens final {
 public:
   class Token {
@@ -170,12 +172,12 @@ public:
 
   class IdentToken final : public Token {
   public:
-    IdentToken(unsigned pos, char *sym): Token(), pos(pos), sym(sym) {}
-    const char *text() override { return sym; }
+    IdentToken(unsigned pos, Symbol& sym): Token(), pos(pos), sym(sym) {}
+    const char *text() override { return sym.ident; }
     bool isIdent() override { return true; }
 
     const unsigned pos;
-    const char *sym;
+    Symbol &sym;
   };
 
   static NoneToken *const None;
@@ -205,7 +207,7 @@ public:
   static IfToken *const If;
   static WhileToken *const While;
 
-  static IdentToken *createIdent(unsigned pos, char *sym);
+  static IdentToken *createIdent(unsigned pos, Symbol &sym);
 
   static Token *tokenOf(unsigned char c);
 

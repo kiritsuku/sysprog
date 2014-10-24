@@ -41,8 +41,7 @@ Tokens::Token *Scanner::acceptChar(const char c)
       return kw;
     else {
       auto sym = symboltable.create(ident);
-      // TODO free memory
-      return Tokens::createIdent(start, (char*) (sym->ident));
+      return Tokens::createIdent(start, *sym);
     }
   }
 
