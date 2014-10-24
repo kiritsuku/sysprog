@@ -26,6 +26,8 @@ private:
   unsigned lastStart;
 
   Tokens::Token *acceptChar(const char c);
+  Tokens::Token *createNumber();
+  Tokens::Token *createIdent();
 };
 
 #endif

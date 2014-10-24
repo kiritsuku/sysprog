@@ -3,6 +3,35 @@
 #include <errno.h>
 #include "Scanner.h"
 
+Tokens::Token *Scanner::createNumber()
+{
+  unsigned start = lastStart;
+  unsigned len = buffer.offset()-start;
+  char str[len+1];
+  buffer.range(str, start, len);
+  lastStart += len;
+
+  auto value = strtol(str, 0, 10);
+  if (value == 0 && errno == ERANGE)
+    return Tokens::Error;
+  return Tokens::createNumber(start, value, str);
+}
+
+Tokens::Token *Scanner::createIdent()
+{
+  unsigned start = lastStart;
+  unsigned len = buffer.offset()-start;
+  char str[len+1];
+  buffer.range(str, start, len);
+  lastStart += len;
+
+  auto kw = Tokens::keyword(str);
+  if (kw != Tokens::None)
+    return kw;
+  auto sym = symboltable.create(str);
+  return Tokens::createIdent(start, *sym);
+}
+
 Tokens::Token *Scanner::acceptChar(const char c)
 {
   auto t = automat.accept(c);
@@ -19,36 +48,11 @@ Tokens::Token *Scanner::acceptChar(const char c)
   else if (t == Tokens::None)
     return acceptChar(buffer.nextChar());
 
-  else if (t == Tokens::Int) {
-    unsigned start = lastStart;
-    unsigned len = buffer.offset()-start;
-    char strvalue[len+1];
-    buffer.range(strvalue, start, len);
-    lastStart += strlen(strvalue);
-    buffer.setOffset(lastStart);
+  else if (t == Tokens::Int)
+    return createNumber();
 
-    auto value = strtol(strvalue, 0, 10);
-    if (value == 0 && errno == ERANGE)
-      return Tokens::Error;
-    return Tokens::createNumber(start, value, strvalue);
-  }
-
-  else if (t == Tokens::Str) {
-    unsigned start = lastStart;
-    unsigned len = buffer.offset()-start;
-    char ident[len+1];
-    buffer.range(ident, start, len);
-
-    auto kw = Tokens::keyword(ident);
-    lastStart = buffer.offset();
-
-    if (kw != Tokens::None)
-      return kw;
-    else {
-      auto sym = symboltable.create(ident);
-      return Tokens::createIdent(start, *sym);
-    }
-  }
+  else if (t == Tokens::Str)
+    return createIdent();
 
   else {
     auto len = t->textLen();
