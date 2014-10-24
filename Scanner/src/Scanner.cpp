@@ -9,33 +9,40 @@ Tokens::Token *Scanner::acceptChar(const char c)
     return t;
 
   else if (t == Tokens::Ignore) {
+    auto c = buffer.nextChar();
     lastStart = buffer.offset();
-    return acceptChar(buffer.nextChar());
+    return acceptChar(c);
   }
 
   else if (t == Tokens::None)
     return acceptChar(buffer.nextChar());
 
   else if (t == Tokens::Int) {
-    auto strvalue = buffer.range(lastStart);
+    unsigned start = lastStart;
+    unsigned len = buffer.offset()-start;
+    char strvalue[len+1];
+    buffer.range(strvalue, start, len);
     lastStart += strlen(strvalue);
     buffer.setOffset(lastStart);
     // TODO create int value here
-    delete[] strvalue;
     return Tokens::Int;
   }
 
   else if (t == Tokens::Str) {
-    auto ident = buffer.range(lastStart);
+    unsigned start = lastStart;
+    unsigned len = buffer.offset()-start;
+    char ident[len+1];
+    buffer.range(ident, start, len);
+
     auto kw = Tokens::keyword(ident);
     lastStart = buffer.offset();
-    delete[] ident;
 
     if (kw != Tokens::None)
       return kw;
     else {
-      // TODO create symbol in symboltable
-      return Tokens::Str;
+      auto sym = symboltable.create(ident);
+      // TODO free memory
+      return Tokens::createIdent(start, (char*) (sym->ident));
     }
   }
 

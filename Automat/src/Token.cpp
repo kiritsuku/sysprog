@@ -14,6 +14,11 @@ unsigned Tokens::Token::textLen()
   return strlen(text());
 }
 
+bool Tokens::Token::isIdent()
+{
+  return false;
+}
+
 Tokens::NoneToken *const Tokens::None = new NoneToken();
 Tokens::IgnoreToken *const Tokens::Ignore = new IgnoreToken();
 Tokens::ErrorToken *const Tokens::Error = new ErrorToken();

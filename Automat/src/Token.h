@@ -9,6 +9,7 @@ public:
     virtual ~Token();
     virtual const char *text() = 0;
     virtual unsigned textLen();
+    virtual bool isIdent();
   };
 
   class NoneToken final : public Token {
@@ -171,6 +172,7 @@ public:
   public:
     IdentToken(unsigned pos, char *sym): Token(), pos(pos), sym(sym) {}
     const char *text() override { return sym; }
+    bool isIdent() override { return true; }
 
     const unsigned pos;
     const char *sym;
@@ -203,7 +205,7 @@ public:
   static IfToken *const If;
   static WhileToken *const While;
 
-  IdentToken *createIdent(unsigned pos, char *sym);
+  static IdentToken *createIdent(unsigned pos, char *sym);
 
   static Token *tokenOf(unsigned char c);
 

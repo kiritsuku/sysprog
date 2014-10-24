@@ -78,18 +78,16 @@ char Buffer::currentChar()
   return curBuffer[off];
 }
 
-int Buffer::offset()
+unsigned Buffer::offset()
 {
   return off;
 }
 
-char* Buffer::range(const unsigned start)
+char* Buffer::range(char *buffer, const unsigned start, const unsigned len)
 {
-  auto len = off-start;
-  auto ret = new char[len+1];
-  strncpy(ret, curBuffer+start, len);
-  ret[len] = '\0';
-  return ret;
+  strncpy(buffer, curBuffer+start, len);
+  buffer[len] = '\0';
+  return buffer;
 }
 
 void Buffer::setOffset(const unsigned offset)
