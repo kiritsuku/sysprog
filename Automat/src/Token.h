@@ -173,9 +173,9 @@ public:
 
   class IdentToken final : public Token {
   public:
-    IdentToken(unsigned pos, Symbol& sym): Token(), pos(pos), sym(sym) {}
-    const char *text() override { return sym.ident; }
-    bool isIdent() override { return true; }
+    explicit IdentToken(unsigned pos, Symbol& sym);
+    const char *text() override;
+    bool isIdent() override;
 
     const unsigned pos;
     Symbol &sym;
@@ -183,8 +183,8 @@ public:
 
   class NumberToken final : public Token {
   public:
-    NumberToken(unsigned pos, unsigned value, char *strvalue);
-    ~NumberToken();
+    explicit NumberToken(unsigned pos, unsigned value, char *strvalue);
+    ~NumberToken() override;
     const char *text() override;
     bool isInt() override;
 

@@ -94,15 +94,34 @@ Tokens::Token *Tokens::tokenOf(unsigned char c)
   }
 }
 
+Tokens::IdentToken::IdentToken(unsigned pos, Symbol& sym):
+  Tokens::Token(),
+  pos(pos),
+  sym(sym)
+{
+}
+
+const char *Tokens::IdentToken::text()
+{
+  return sym.ident;
+}
+
+bool Tokens::IdentToken::isIdent()
+{
+  return true;
+}
+
 Tokens::NumberToken::NumberToken(unsigned pos, unsigned value, char *strvalue):
   Tokens::Token(),
   pos(pos),
-  value(value)
+  value(value),
+  strvalue(strvalue)
 {
   char *s = new char[strlen(strvalue)+1];
   strcpy(s, strvalue);
   this->strvalue = s;
 }
+
 Tokens::NumberToken::~NumberToken()
 {
   delete[] strvalue;
