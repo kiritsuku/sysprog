@@ -86,14 +86,21 @@ int Buffer::offset()
 char* Buffer::range(const unsigned start)
 {
   auto len = off-start;
-  auto ret = new char[len];
+  auto ret = new char[len+1];
   strncpy(ret, curBuffer+start, len);
+  ret[len] = '\0';
   return ret;
+}
+
+void Buffer::setOffset(const unsigned offset)
+{
+  off = offset;
 }
 
 void Buffer::fillBuffer()
 {
   memset(curBuffer, 0, BUFFER_SIZE);
-  strcpy(curBuffer, "Hellow world!\nHow are you?\n\nI'm fine");
+  //strcpy(curBuffer, "Hello world!\nHow are you\n\n1+1*2<5");
+  strcpy(curBuffer, "1+1*2:=5<:>hel2lo=5");
   //readFile(this->fileName);
 }

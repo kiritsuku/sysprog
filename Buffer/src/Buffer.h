@@ -17,6 +17,7 @@ public:
   char currentChar();
   int offset();
   char* range(const unsigned offset);
+  void setOffset(const unsigned offset);
 private:
   void readFile(const char* name);
   void fillBuffer();

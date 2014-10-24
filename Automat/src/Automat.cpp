@@ -41,7 +41,7 @@ Automat::State::~State()
 Tokens::Token Automat::StartState::accept(const char c)
 {
   switch(c) {
-    case ' ': case '\t':
+    case ' ': case '\t': case '\n':
       return Tokens::Ignore;
     case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
     case 'g': case 'h': case 'i': case 'j': case 'k': case 'l':
@@ -69,11 +69,14 @@ Tokens::Token Automat::StartState::accept(const char c)
       outer.state = outer.colonState;
       return Tokens::None;
 
-    case '+': case '-': case '/': case '*': case '>': case '=':
+    case '/':
+      outer.state = outer.signState;
+      return Tokens::Ignore;
+
+    case '+': case '-': case '*': case '>': case '=':
     case '!': case '&': case ';': case '(': case ')': case '{':
     case '}': case '[': case ']':
-      outer.state = outer.signState;
-      return Tokens::None;
+      return Tokens::instance().tokenOf(c);
 
     default:
       return Tokens::Error;
@@ -111,7 +114,7 @@ Tokens::Token Automat::SignState::accept(const char c)
       return Tokens::Ignore;
     default:
       outer.state = outer.startState;
-      return Tokens::instance().tokenOf(c);
+      return Tokens::instance().tokenOf('/');
   }
 }
 

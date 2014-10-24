@@ -14,6 +14,15 @@ Tokens::Token Scanner::acceptChar(const char c)
     case Tokens::None:
       return acceptChar(buffer.nextChar());
 
+    case Tokens::Int: {
+      auto strvalue = buffer.range(lastStart);
+      lastStart += strlen(strvalue);
+      buffer.setOffset(lastStart);
+      // create int value here
+      delete[] strvalue;
+      return Tokens::Int;
+    }
+
     case Tokens::Ident: {
       auto ident = buffer.range(lastStart);
       auto kw = Tokens::instance().keyword(ident);
@@ -31,6 +40,7 @@ Tokens::Token Scanner::acceptChar(const char c)
     default: {
       auto len = Tokens::instance().textLen(t);
       lastStart += len;
+      buffer.setOffset(lastStart);
       return t;
     }
   }
