@@ -6,20 +6,22 @@
 #include "Buffer.h"
 #include "Symboltable.h"
 
-static const unsigned SCANNER_BUFFER_SIZE = 100;
-
 class Scanner final {
 public:
-	Scanner(Automat &automat, Buffer &buffer, Symboltable &symboltable):
-    automat(automat),
-    buffer(buffer),
-    symboltable(symboltable),
-    lastStart(0) {}
-	~Scanner() {}
+	Scanner(Automat &automat, Buffer &buffer, Symboltable &symboltable);
+	~Scanner();
 
+  /**
+   * Returns the next token. Doesn't return token that represent
+   * whitespace or comments.
+   *
+   * Returns `Tokens::Eof` if the buffer is empty.
+   */
   Tokens::Token *nextToken();
 
 private:
+  static const unsigned SCANNER_BUFFER_SIZE = 100;
+
   Automat &automat;
   Buffer &buffer;
   Symboltable &symboltable;

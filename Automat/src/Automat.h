@@ -8,6 +8,22 @@ public:
   explicit Automat();
   ~Automat();
 
+  /**
+   * Applies `c` to the current state of the automaton and returns the
+   * detected token.
+   *
+   * Returns `Tokens::None` if `c` is part of a token that represents
+   * multiple characters. In this case `accept` needs to be called with
+   * the next character.
+   *
+   * If `Tokens::Ignore` is returned, `c` needs to be ignored (may be the
+   * case for whitespace and comments).
+   *
+   * In all other cases the returned token corresponds to `c` or to a range
+   * of characters previously shown by returned `Tokens::None`. In this
+   * case `accept` needs to be called again with the same `c` (the internal
+   * state has changed in this case but `c` has not yet been applied).
+   */
   Tokens::Token *accept(const char c);
 
 private:
@@ -91,6 +107,7 @@ private:
   SmallerColonState *const smallerColonState;
   ColonEqualsState *const colonEqualsState;
 
+  /** The current active state. */
   State *state;
 };
 

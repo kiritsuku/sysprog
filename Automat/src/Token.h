@@ -9,9 +9,14 @@ public:
   public:
     explicit Token();
     virtual ~Token();
+
+    /** The text that is represented by this token. */
     virtual const char *text() = 0;
+    /** The length of `text`. */
     virtual unsigned textLen();
+    /** Returns `true` if this token represents an identifier. */
     virtual bool isIdent();
+    /** Returns `true` if this token represents an int. */
     virtual bool isInt();
   };
 
@@ -224,6 +229,10 @@ public:
   static IdentToken *createIdent(unsigned pos, Symbol &sym);
   static NumberToken *createNumber(unsigned pos, unsigned value, char *strvalue);
 
+  /**
+   * Returns the token that corresponds to `c` or `Token::Error` if none
+   * correspondence exists.
+   */
   static Token *tokenOf(unsigned char c);
 
   /**

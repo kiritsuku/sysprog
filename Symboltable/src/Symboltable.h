@@ -6,6 +6,9 @@ public:
   explicit Symbol(char const *ident);
   ~Symbol();
 
+  /**
+   * The identifier represented by this symbol.
+   */
   char const *ident;
 };
 
@@ -14,7 +17,12 @@ public:
   explicit Symboltable();
   ~Symboltable();
 
+  /**
+   * Creates a symbol to `str` if it does not yet exists and returns a
+   * reference to it.
+   */
   Symbol *create(char *str);
+
 private:
   unsigned tableSize;
   Symbol **data;

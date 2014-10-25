@@ -5,14 +5,17 @@
 #include <stdarg.h>
 #include "Buffer.h"
 
-Buffer::Buffer(const char* fileName):
+Buffer::Buffer(const char *const fileName):
   fileName(fileName),
   curBuffer(),
-  off(0) {
-    fillBuffer();
-  }
+  off(0)
+{
+  fillBuffer();
+}
 
-Buffer::~Buffer() {}
+Buffer::~Buffer()
+{
+}
 
 void printErr(const char* format, ...)
 {

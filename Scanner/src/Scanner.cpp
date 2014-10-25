@@ -3,6 +3,18 @@
 #include <errno.h>
 #include "Scanner.h"
 
+Scanner::Scanner(Automat &automat, Buffer &buffer, Symboltable &symboltable):
+  automat(automat),
+  buffer(buffer),
+  symboltable(symboltable),
+  lastStart(0)
+{
+}
+
+Scanner::~Scanner()
+{
+}
+
 Tokens::Token *Scanner::createNumber()
 {
   unsigned start = lastStart;
