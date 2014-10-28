@@ -51,7 +51,13 @@ Tokens::Token *Scanner::acceptChar(const char c)
 
   auto t = automat.accept(c);
 
-  if (t == Tokens::Ignore || t == Tokens::Error) {
+  if (t == Tokens::Error) {
+    buffer.nextChar();
+    lastStart = buffer.offset();
+    return t;
+  }
+
+  else if (t == Tokens::Ignore) {
     auto c = buffer.nextChar();
     lastStart = buffer.offset();
     return acceptChar(c);
