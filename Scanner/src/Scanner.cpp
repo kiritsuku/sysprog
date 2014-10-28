@@ -46,12 +46,12 @@ Tokens::Token *Scanner::createIdent()
 
 Tokens::Token *Scanner::acceptChar(const char c)
 {
+  if (c == 0)
+    return Tokens::Eof;
+
   auto t = automat.accept(c);
 
-  if (t == Tokens::Eof)
-    return t;
-
-  else if (t == Tokens::Ignore) {
+  if (t == Tokens::Ignore || t == Tokens::Error) {
     auto c = buffer.nextChar();
     lastStart = buffer.offset();
     return acceptChar(c);

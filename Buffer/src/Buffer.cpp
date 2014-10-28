@@ -7,7 +7,6 @@
 
 Buffer::Buffer(const char *const fileName):
   fileName(fileName),
-  curBuffer(),
   off(0)
 {
   fillBuffer();
@@ -15,6 +14,7 @@ Buffer::Buffer(const char *const fileName):
 
 Buffer::~Buffer()
 {
+  delete[] buffer;
 }
 
 void printErr(const char* format, ...)
@@ -49,22 +49,13 @@ int fileSize(FILE* f)
 
 void Buffer::readFile(const char* name)
 {
-  char* buffer = this->curBuffer;
   FILE* f = nullptr;
   if ((f = openFileReadOnly(name)) != nullptr) {
-    int size = fileSize(f);
-    printf("file size: %d\n", size);
-    for (int i = 0; i < size; i += BUFFER_SIZE) {
-      int numRead = fread(buffer, 1, BUFFER_SIZE, f);
-      if (numRead < 1) {
-        printErr("Could not read from file '%s'", name);
-        break;
-      }
-      // handles end of file
-//      if (numRead < BUFFER_SIZE) {
-//        memset(&buffer[numRead], 0, BUFFER_SIZE-numRead);
-//      }
-      printf(">>>%.*s<<<\n", numRead, buffer);
+    bufferSize = fileSize(f);
+    buffer = new char[bufferSize];
+    int numRead = fread(buffer, 1, bufferSize, f);
+    if (numRead < 1) {
+      printErr("Could not read from file '%s'", name);
     }
     fclose(f);
   }
@@ -73,12 +64,12 @@ void Buffer::readFile(const char* name)
 char Buffer::nextChar()
 {
   off += 1;
-  auto next = off < BUFFER_SIZE ? curBuffer[off] : 0;
+  auto next = off < bufferSize ? buffer[off] : 0;
   return next;
 }
 char Buffer::currentChar()
 {
-  return curBuffer[off];
+  return buffer[off];
 }
 
 unsigned Buffer::offset()
@@ -88,7 +79,7 @@ unsigned Buffer::offset()
 
 char* Buffer::range(char *buffer, const unsigned start, const unsigned len)
 {
-  strncpy(buffer, curBuffer+start, len);
+  strncpy(buffer, this->buffer+start, len);
   buffer[len] = '\0';
   return buffer;
 }
@@ -100,7 +91,5 @@ void Buffer::setOffset(const unsigned offset)
 
 void Buffer::fillBuffer()
 {
-  memset(curBuffer, 0, BUFFER_SIZE);
-  strcpy(curBuffer, "hello \n\nworld\n100+1*235761:=556<:>hel22lo=598");
-  //readFile(this->fileName);
+  readFile(this->fileName);
 }

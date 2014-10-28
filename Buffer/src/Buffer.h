@@ -35,10 +35,10 @@ public:
   void setOffset(const unsigned offset);
 
 private:
-  static const unsigned BUFFER_SIZE = 512;
+  unsigned bufferSize;
 
   const char *const fileName;
-  char curBuffer[BUFFER_SIZE];
+  char *buffer;
   unsigned off;
 
   void readFile(const char* name);
