@@ -3,6 +3,7 @@
 
 Symboltable::Symboltable():
   tableSize(64),
+  existingElements(0),
   data(new Symbol*[tableSize])
 {
   memset(data, 0, sizeof(Symbol*)*tableSize);
@@ -20,18 +21,22 @@ Symboltable::~Symboltable()
 
 Symbol *Symboltable::create(char *str)
 {
+  if (isFull())
+    resize();
+
   auto i = indexOf(str);
 
   if (data[i] == nullptr) {
     Symbol *sym = new Symbol(str);
     data[i] = sym;
+    existingElements += 1;
     return sym;
   }
   else
     return data[i];
 }
 
-unsigned Symboltable::indexOf(char *str)
+unsigned Symboltable::indexOf(const char *str)
 {
   auto h = strhash(str);
   unsigned i = 0;
@@ -40,7 +45,7 @@ unsigned Symboltable::indexOf(char *str)
   return h;
 }
 
-unsigned long Symboltable::strhash(char *str, unsigned offset)
+unsigned long Symboltable::strhash(const char *str, const unsigned offset)
 {
   // implementation from http://www.cse.yorku.ca/~oz/hash.html
   unsigned long h = 5381;
@@ -48,6 +53,33 @@ unsigned long Symboltable::strhash(char *str, unsigned offset)
   while ((c = *str++))
     h = ((h << 5)+h)+c+offset;
   return h % tableSize;
+}
+
+bool Symboltable::isFull()
+{
+  return existingElements >= tableSize*0.8;
+}
+
+void Symboltable::resize()
+{
+  auto oldData = data;
+  auto oldSize = tableSize;
+  tableSize *= 2;
+  data = new Symbol*[tableSize];
+  memset(data, 0, sizeof(Symbol*)*tableSize);
+
+  for (unsigned i = 0; i < oldSize; ++i) {
+    auto sym = oldData[i];
+    if (sym != nullptr)
+      resizeCreate(sym);
+  }
+  delete[] oldData;
+}
+
+void Symboltable::resizeCreate(Symbol *sym)
+{
+  auto i = indexOf(sym->ident);
+  data[i] = sym;
 }
 
 Symbol::Symbol(char const *ident)

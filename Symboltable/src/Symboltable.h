@@ -25,9 +25,14 @@ public:
 
 private:
   unsigned tableSize;
+  unsigned existingElements;
   Symbol **data;
-  unsigned long strhash(char *str, unsigned offset = 0);
-  unsigned indexOf(char *str);
+
+  unsigned long strhash(const char *str, const unsigned offset = 0);
+  unsigned indexOf(const char *str);
+  bool isFull();
+  void resize();
+  void resizeCreate(Symbol *sym);
 };
 
 #endif
