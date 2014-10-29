@@ -42,16 +42,22 @@ function print_err {
 
 # no parameters expected
 function run_test_file {
+  start=`date +%s%N`
   $cc $test_file > $run_file
   cc_ret=$?
+  end=`date +%s%N`
+  duration="$(( (end-start)/1000000 )) ms"
+
   diff -q $check_file $run_file > /dev/null
   diff_ret=$?
 
+  echo "[run] $test_file"
   if [[ $cc_ret -eq 0 && $diff_ret -eq 0 ]]; then
     rm $run_file
-    print_col $color_green "Success: $test_file"
+    printf "%6s${color_green}Success$color_reset (${duration})\n"
   else
-    print_err "Failure: $test_file"
+    ((errors+=1))
+    printf "%6s${color_red}Failure$color_reset (${duration})\n"
   fi
 }
 
