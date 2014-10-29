@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 #include "Symboltable.h"
 
 Symboltable::Symboltable():
@@ -62,6 +63,7 @@ bool Symboltable::isFull()
 
 void Symboltable::resize()
 {
+  fprintf(stderr, "Resize symboltable at size %d\n", tableSize);
   auto oldData = data;
   auto oldSize = tableSize;
   tableSize *= 2;
