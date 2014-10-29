@@ -54,7 +54,7 @@ void Buffer::readFile(const char* name)
     bufferSize = fileSize(f);
     buffer = new char[bufferSize];
     int numRead = fread(buffer, 1, bufferSize, f);
-    if (numRead < 1) {
+    if (numRead < 1 && ferror(f) != 0) {
       printErr("Could not read from file '%s'", name);
     }
     fclose(f);
