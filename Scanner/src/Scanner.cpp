@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <errno.h>
 #include "Scanner.h"
@@ -23,8 +24,9 @@ Tokens::Token *Scanner::createNumber()
   buffer.range(str, start, len);
   lastStart += len;
 
+  errno = 0;
   auto value = strtol(str, 0, 10);
-  if (value == 0 && errno == ERANGE)
+  if (errno == ERANGE)
     return Tokens::Error;
   return Tokens::createNumber(start, value, str);
 }
