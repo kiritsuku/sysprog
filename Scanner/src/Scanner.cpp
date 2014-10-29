@@ -8,12 +8,18 @@ Scanner::Scanner(Automat &automat, Buffer &buffer, Symboltable &symboltable):
   automat(automat),
   buffer(buffer),
   symboltable(symboltable),
-  lastStart(0)
+  lastStart(0),
+  lastOffset(0)
 {
 }
 
 Scanner::~Scanner()
 {
+}
+
+unsigned Scanner::offset()
+{
+  return lastOffset;
 }
 
 Tokens::Token *Scanner::createNumber()
@@ -84,9 +90,11 @@ Tokens::Token *Scanner::acceptChar(const char c)
 
 Tokens::Token *Scanner::nextToken()
 {
+  lastOffset = lastStart;
+
   auto c = buffer.currentChar();
   if (c == 0)
     return Tokens::Eof;
-  else
-    return acceptChar(c);
+
+  return acceptChar(c);
 }

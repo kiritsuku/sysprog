@@ -19,6 +19,11 @@ public:
    */
   Tokens::Token *nextToken();
 
+  /**
+   * Returns the offset of the last token.
+   */
+  unsigned offset();
+
 private:
   static const unsigned SCANNER_BUFFER_SIZE = 100;
 
@@ -26,6 +31,7 @@ private:
   Buffer &buffer;
   Symboltable &symboltable;
   unsigned lastStart;
+  unsigned lastOffset;
 
   Tokens::Token *acceptChar(const char c);
   Tokens::Token *createNumber();

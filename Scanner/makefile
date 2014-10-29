@@ -12,7 +12,8 @@ SHAREDLIB = ../sharedlib
 ## darauf achten, dass letzte Zeile ohne "\" eingetragen wird
 
 OBJS = $(OBJDIR)/Scanner.o \
-	$(OBJDIR)/TestScanner.o
+	$(OBJDIR)/TestScanner.o \
+	$(OBJDIR)/ErrorHandler.o
 
 OBJSFORSCANNERLIB =  \
 	$(LIBDIR)/Scanner.o

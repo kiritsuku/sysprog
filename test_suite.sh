@@ -44,7 +44,6 @@ function print_err {
 function run_test_file {
   start=`date +%s%N`
   $cc $test_file > $run_file
-  cc_ret=$?
   end=`date +%s%N`
   duration="$(( (end-start)/1000000 )) ms"
 
@@ -52,7 +51,7 @@ function run_test_file {
   diff_ret=$?
 
   echo "[run] $test_file"
-  if [[ $cc_ret -eq 0 && $diff_ret -eq 0 ]]; then
+  if [[ $diff_ret -eq 0 ]]; then
     rm $run_file
     printf "%6s${color_green}Success$color_reset (${duration})\n"
   else

@@ -4,6 +4,7 @@
 #include "Buffer.h"
 #include "Token.h"
 #include "Symboltable.h"
+#include "ErrorHandler.h"
 
 int main(int argc, char* argv[])
 {
@@ -16,15 +17,20 @@ int main(int argc, char* argv[])
   Automat automat;
   Buffer buffer(fileName);
   Symboltable symboltable;
-	Scanner scanner(automat, buffer, symboltable);
+  Scanner scanner(automat, buffer, symboltable);
+  ErrorHandler handler(fileName);
 
   auto t = scanner.nextToken();
   while (t != Tokens::Eof) {
+    if (t == Tokens::Error)
+      handler.addErrorPos(scanner.offset());
+
     printf("%s\n", t->text());
     if (t->isIdent() || t->isInt())
       delete t;
     t = scanner.nextToken();
   }
-  return 0;
+
+  return handler.hasErrors() ? 1 : 0;
 }
 
