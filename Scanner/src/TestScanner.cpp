@@ -17,20 +17,18 @@ int main(int argc, char* argv[])
   Automat automat;
   Buffer buffer(fileName);
   Symboltable symboltable;
-  Scanner scanner(automat, buffer, symboltable);
   ErrorHandler handler(fileName);
+  Scanner scanner(automat, buffer, symboltable, handler);
 
   auto t = scanner.nextToken();
   while (t != Tokens::Eof) {
-    if (t == Tokens::Error)
-      handler.addErrorPos(scanner.offset());
-
     printf("%s\n", t->text());
     if (t->isIdent() || t->isInt())
       delete t;
     t = scanner.nextToken();
   }
 
+  handler.showErrorMessages();
   return handler.hasErrors() ? 1 : 0;
 }
 

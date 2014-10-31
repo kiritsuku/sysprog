@@ -1,8 +1,39 @@
+<error>
 Hello
 <error>
 world
 !
+<error>
 How
 are
 you
 <error>
+Even
+<error>
+more
+errors
+<error>
+
+1,4: error: invalid character
+	   .   Hello.   world!
+	   ^
+
+1,13: error: invalid character
+	   .   Hello.   world!
+	            ^
+
+3,1: error: invalid character
+	?How are you?
+	^
+
+3,13: error: invalid character
+	?How are you?
+	            ^
+
+5,6: error: invalid character
+	Even ? more errors .
+	     ^
+
+5,20: error: invalid character
+	Even ? more errors .
+	                   ^

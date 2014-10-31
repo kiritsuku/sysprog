@@ -4,10 +4,11 @@
 #include <errno.h>
 #include "Scanner.h"
 
-Scanner::Scanner(Automat &automat, Buffer &buffer, Symboltable &symboltable):
+Scanner::Scanner(Automat &automat, Buffer &buffer, Symboltable &symboltable, ErrorHandler &handler):
   automat(automat),
   buffer(buffer),
   symboltable(symboltable),
+  handler(handler),
   lastStart(0),
   lastOffset(0)
 {
@@ -32,8 +33,10 @@ Tokens::Token *Scanner::createNumber()
 
   errno = 0;
   auto value = strtol(str, 0, 10);
-  if (errno == ERANGE)
+  if (errno == ERANGE) {
+    handler.addError(start, "number too large");
     return Tokens::Error;
+  }
   return Tokens::createNumber(start, value, str);
 }
 
@@ -54,12 +57,15 @@ Tokens::Token *Scanner::createIdent()
 
 Tokens::Token *Scanner::acceptChar(const char c)
 {
+  lastOffset = lastStart;
+
   if (c == 0)
     return Tokens::Eof;
 
   auto t = automat.accept(c);
 
   if (t == Tokens::Error) {
+    handler.addError(lastOffset, "invalid character");
     buffer.nextChar();
     lastStart = buffer.offset();
     return t;
@@ -90,8 +96,6 @@ Tokens::Token *Scanner::acceptChar(const char c)
 
 Tokens::Token *Scanner::nextToken()
 {
-  lastOffset = lastStart;
-
   auto c = buffer.currentChar();
   if (c == 0)
     return Tokens::Eof;

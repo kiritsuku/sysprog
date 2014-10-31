@@ -5,10 +5,11 @@
 #include "Automat.h"
 #include "Buffer.h"
 #include "Symboltable.h"
+#include "ErrorHandler.h"
 
 class Scanner final {
 public:
-	Scanner(Automat &automat, Buffer &buffer, Symboltable &symboltable);
+	Scanner(Automat &automat, Buffer &buffer, Symboltable &symboltable, ErrorHandler &handler);
 	~Scanner();
 
   /**
@@ -30,6 +31,7 @@ private:
   Automat &automat;
   Buffer &buffer;
   Symboltable &symboltable;
+  ErrorHandler &handler;
   unsigned lastStart;
   unsigned lastOffset;
 
