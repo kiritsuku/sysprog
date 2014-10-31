@@ -171,10 +171,11 @@ Tokens::Token *Automat::CommentEndState::accept(const char c)
   switch(c) {
     case '/':
       outer.state = outer.startState;
+      return Tokens::Ignore;
     default:
       outer.state = outer.commentState;
+      return Tokens::None;
   }
-  return Tokens::Ignore;
 }
 
 Tokens::Token *Automat::SmallerColonState::accept(const char c)
