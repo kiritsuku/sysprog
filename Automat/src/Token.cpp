@@ -51,14 +51,14 @@ Tokens::RBracketToken *const Tokens::RBracket = new RBracketToken();
 Tokens::IfToken *const Tokens::If = new IfToken();
 Tokens::WhileToken *const Tokens::While = new WhileToken();
 
-Tokens::IdentToken *Tokens::createIdent(unsigned pos, Symbol &sym)
+Tokens::IdentToken *Tokens::createIdent(Symbol &sym)
 {
-  return new IdentToken(pos, sym);
+  return new IdentToken(sym);
 }
 
-Tokens::NumberToken *Tokens::createNumber(unsigned pos, unsigned value, char *strvalue)
+Tokens::NumberToken *Tokens::createNumber(unsigned value, char *strvalue)
 {
-  return new NumberToken(pos, value, strvalue);
+  return new NumberToken(value, strvalue);
 }
 
 Tokens::Token *Tokens::keyword(const char *text)
@@ -94,9 +94,8 @@ Tokens::Token *Tokens::tokenOf(unsigned char c)
   }
 }
 
-Tokens::IdentToken::IdentToken(unsigned pos, Symbol& sym):
+Tokens::IdentToken::IdentToken(Symbol& sym):
   Tokens::Token(),
-  pos(pos),
   sym(sym)
 {
 }
@@ -111,9 +110,8 @@ bool Tokens::IdentToken::isIdent()
   return true;
 }
 
-Tokens::NumberToken::NumberToken(unsigned pos, unsigned value, char *strvalue):
+Tokens::NumberToken::NumberToken(unsigned value, char *strvalue):
   Tokens::Token(),
-  pos(pos),
   value(value),
   strvalue(strvalue)
 {

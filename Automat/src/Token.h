@@ -178,22 +178,20 @@ public:
 
   class IdentToken final : public Token {
   public:
-    explicit IdentToken(unsigned pos, Symbol& sym);
+    explicit IdentToken(Symbol& sym);
     const char *text() override;
     bool isIdent() override;
 
-    const unsigned pos;
     Symbol &sym;
   };
 
   class NumberToken final : public Token {
   public:
-    explicit NumberToken(unsigned pos, unsigned value, char *strvalue);
+    explicit NumberToken(unsigned value, char *strvalue);
     ~NumberToken() override;
     const char *text() override;
     bool isInt() override;
 
-    const unsigned pos;
     const unsigned value;
   private:
     const char *strvalue;
@@ -226,8 +224,8 @@ public:
   static IfToken *const If;
   static WhileToken *const While;
 
-  static IdentToken *createIdent(unsigned pos, Symbol &sym);
-  static NumberToken *createNumber(unsigned pos, unsigned value, char *strvalue);
+  static IdentToken *createIdent(Symbol &sym);
+  static NumberToken *createNumber(unsigned value, char *strvalue);
 
   /**
    * Returns the token that corresponds to `c` or `Token::Error` if none

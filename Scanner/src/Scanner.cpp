@@ -37,7 +37,7 @@ Tokens::Token *Scanner::createNumber()
     handler.addError(start, "number too large");
     return Tokens::Error;
   }
-  return Tokens::createNumber(start, value, str);
+  return Tokens::createNumber(value, str);
 }
 
 Tokens::Token *Scanner::createIdent()
@@ -52,7 +52,7 @@ Tokens::Token *Scanner::createIdent()
   if (kw != Tokens::None)
     return kw;
   auto sym = symboltable.create(str);
-  return Tokens::createIdent(start, *sym);
+  return Tokens::createIdent(*sym);
 }
 
 Tokens::Token *Scanner::acceptChar(const char c)
