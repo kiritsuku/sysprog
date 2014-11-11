@@ -26,7 +26,7 @@ public:
   unsigned offset();
 
 private:
-  static const unsigned SCANNER_BUFFER_SIZE = 100;
+
 
   Automat &automat;
   Buffer &buffer;

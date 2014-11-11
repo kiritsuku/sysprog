@@ -21,10 +21,9 @@ int main(int argc, char* argv[])
   Scanner scanner(automat, buffer, symboltable, handler);
 
   auto t = scanner.nextToken();
-  while (t != Tokens::Eof) {
+  while (t->getTokenType() != Tokens::Eof) {
     printf("%s\n", t->text());
-    if (t->isIdent() || t->isInt())
-      delete t;
+    delete t;
     t = scanner.nextToken();
   }
 

@@ -35,9 +35,9 @@ Tokens::Token *Scanner::createNumber()
   auto value = strtol(str, 0, 10);
   if (errno == ERANGE) {
     handler.addError(start, "number too large");
-    return Tokens::Error;
+    return  new Tokens::Token ( Tokens::Error);
   }
-  return Tokens::createNumber(value, str);
+  return new Tokens::Token(Tokens::Number,value, str);
 }
 
 Tokens::Token *Scanner::createIdent()
@@ -50,9 +50,9 @@ Tokens::Token *Scanner::createIdent()
 
   auto kw = Tokens::keyword(str);
   if (kw != Tokens::None)
-    return kw;
+    return new Tokens::Token(kw);
   auto sym = symboltable.create(str);
-  return Tokens::createIdent(*sym);
+  return new Tokens::Token (Tokens::Ident , sym);
 }
 
 Tokens::Token *Scanner::acceptChar(const char c)
@@ -60,37 +60,32 @@ Tokens::Token *Scanner::acceptChar(const char c)
   lastOffset = lastStart;
 
   if (c == 0)
-    return Tokens::Eof;
+    return new Tokens::Token(Tokens::Eof);
 
   auto t = automat.accept(c);
+  switch(t){
 
-  if (t == Tokens::Error) {
-    handler.addError(lastOffset, "invalid character");
-    buffer.nextChar();
-    lastStart = buffer.offset();
-    return t;
-  }
-
-  else if (t == Tokens::Ignore) {
-    auto c = buffer.nextChar();
-    lastStart = buffer.offset();
-    return acceptChar(c);
-  }
-
-  else if (t == Tokens::None)
-    return acceptChar(buffer.nextChar());
-
-  else if (t == Tokens::Int)
-    return createNumber();
-
-  else if (t == Tokens::Str)
-    return createIdent();
-
-  else {
-    auto len = t->textLen();
-    lastStart += len;
-    buffer.setOffset(lastStart);
-    return t;
+  case Tokens::Error:{
+	  handler.addError(lastOffset, "invalid character");
+	  buffer.nextChar();
+	  lastStart = buffer.offset();
+	  return new Tokens::Token (t);}
+  case Tokens::Ignore:{
+	   auto c = buffer.nextChar();
+	   lastStart = buffer.offset();
+	   return acceptChar(c);}
+  case Tokens::None:
+	  return acceptChar(buffer.nextChar());
+  case Tokens::Int:
+	  return createNumber();
+  case Tokens::Str:
+	  return createIdent();
+  default:{
+	   Tokens::Token *tmp = new Tokens::Token (t);
+	   auto len = tmp->textLen();
+	   lastStart += len;
+	   buffer.setOffset(lastStart);
+	   return tmp;}
   }
 }
 
@@ -98,7 +93,7 @@ Tokens::Token *Scanner::nextToken()
 {
   auto c = buffer.currentChar();
   if (c == 0)
-    return Tokens::Eof;
+    return  new Tokens::Token(Tokens::Eof);
 
   return acceptChar(c);
 }

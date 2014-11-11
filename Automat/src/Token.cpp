@@ -1,12 +1,108 @@
 #include <string.h>
 #include "Token.h"
 
-Tokens::Token::Token()
+Tokens::Token::Token(TokenType type)
 {
+	this->type=type;
+	this->value=0;
+	this->sym=NULL;
+	this->strvalue=NULL;
+
+
+
+
+}
+Tokens::Token::Token(TokenType type, Symbol *sym)
+{
+	this->type=type;
+	this->value=0;
+	this->sym = sym;
+	this->strvalue=NULL;
+}
+Tokens::Token::Token(TokenType type, unsigned value, char *strvalue)
+{
+	this->type=type;
+	this->sym= NULL;
+
+	this->value=value;
+
+
+	char *s = new char[strlen(strvalue)+1];
+	strcpy(s, strvalue);
+	this->strvalue = s;
+
+
+
 }
 
 Tokens::Token::~Token()
 {
+	if (this->getTokenType() == Ident || this->getTokenType() == Number){
+		delete[] this->strvalue;
+	}
+
+}
+const char* Tokens::Token::text()
+{
+	switch ( this->type ){
+	case None:
+		return "<none>";
+	case Ignore:
+		return "<ignore>";
+	case Error:
+		return "<error>";
+	case Eof:
+		return "<eof>";
+	case Int:
+		return "<int>";
+	case Str:
+		return "<str>";
+	case Plus:
+		return "+";
+	case Minus:
+		return "-";
+	case Div:
+		return "/";
+	case Mul:
+		return "*";
+	case Smaller:
+		return "<";
+	case Greater:
+		return ">";
+	case Equals:
+		return "=";
+	case ColonEquals:
+		return ":=";
+	case SmallerColonGreater:
+		return "<:>";
+	case Bang:
+		return "!";
+	case And:
+		return "&";
+	case Semi:
+		return ";";
+	case LParen:
+		return "(";
+	case RParen:
+		return ")";
+	case LBrace:
+		return "{";
+	case RBrace:
+		return "}";
+	case LBracket:
+		return "[";
+	case RBracket:
+		return "]";
+	case If:
+		return "if";
+	case While:
+		return "while";
+	case Ident:
+		return this->sym->ident;
+	case Number:
+		return this->strvalue;
+
+	}
 }
 
 unsigned Tokens::Token::textLen()
@@ -16,52 +112,19 @@ unsigned Tokens::Token::textLen()
 
 bool Tokens::Token::isIdent()
 {
-  return false;
+  return (this->type == Ident);
 }
 
 bool Tokens::Token::isInt()
 {
-  return false;
+	return(this->type == Number);
 }
 
-Tokens::NoneToken *const Tokens::None = new NoneToken();
-Tokens::IgnoreToken *const Tokens::Ignore = new IgnoreToken();
-Tokens::ErrorToken *const Tokens::Error = new ErrorToken();
-Tokens::EofToken *const Tokens::Eof = new EofToken();
-Tokens::IntToken *const Tokens::Int = new IntToken();
-Tokens::StrToken *const Tokens::Str = new StrToken();
-Tokens::PlusToken *const Tokens::Plus = new PlusToken();
-Tokens::MinusToken *const Tokens::Minus = new MinusToken();
-Tokens::DivToken *const Tokens::Div = new DivToken();
-Tokens::MulToken *const Tokens::Mul = new MulToken();
-Tokens::SmallerToken *const Tokens::Smaller = new SmallerToken();
-Tokens::GreaterToken *const Tokens::Greater = new GreaterToken();
-Tokens::EqualsToken *const Tokens::Equals = new EqualsToken();
-Tokens::ColonEqualsToken *const Tokens::ColonEquals = new ColonEqualsToken();
-Tokens::SmallerColonGreaterToken *const Tokens::SmallerColonGreater = new SmallerColonGreaterToken();
-Tokens::BangToken *const Tokens::Bang = new BangToken();
-Tokens::AndToken *const Tokens::And = new AndToken();
-Tokens::SemiToken *const Tokens::Semi = new SemiToken();
-Tokens::LParenToken *const Tokens::LParen = new LParenToken();
-Tokens::RParenToken *const Tokens::RParen = new RParenToken();
-Tokens::LBraceToken *const Tokens::LBrace = new LBraceToken();
-Tokens::RBraceToken *const Tokens::RBrace = new RBraceToken();
-Tokens::LBracketToken *const Tokens::LBracket = new LBracketToken();
-Tokens::RBracketToken *const Tokens::RBracket = new RBracketToken();
-Tokens::IfToken *const Tokens::If = new IfToken();
-Tokens::WhileToken *const Tokens::While = new WhileToken();
-
-Tokens::IdentToken *Tokens::createIdent(Symbol &sym)
-{
-  return new IdentToken(sym);
+Tokens::TokenType Tokens::Token::getTokenType (){
+	return this->type;
 }
 
-Tokens::NumberToken *Tokens::createNumber(unsigned value, char *strvalue)
-{
-  return new NumberToken(value, strvalue);
-}
-
-Tokens::Token *Tokens::keyword(const char *text)
+Tokens::TokenType Tokens::keyword(const char *text)
 {
   if (strcmp(text, "if") == 0 || strcmp(text, "IF") == 0)
     return If;
@@ -71,7 +134,7 @@ Tokens::Token *Tokens::keyword(const char *text)
     return None;
 }
 
-Tokens::Token *Tokens::tokenOf(unsigned char c)
+Tokens::TokenType Tokens::tokenOf(unsigned char c)
 {
   switch(c) {
     case '+': return Plus;
@@ -92,45 +155,4 @@ Tokens::Token *Tokens::tokenOf(unsigned char c)
     case ']': return RBracket;
     default : return Error;
   }
-}
-
-Tokens::IdentToken::IdentToken(Symbol& sym):
-  Tokens::Token(),
-  sym(sym)
-{
-}
-
-const char *Tokens::IdentToken::text()
-{
-  return sym.ident;
-}
-
-bool Tokens::IdentToken::isIdent()
-{
-  return true;
-}
-
-Tokens::NumberToken::NumberToken(unsigned value, char *strvalue):
-  Tokens::Token(),
-  value(value),
-  strvalue(strvalue)
-{
-  char *s = new char[strlen(strvalue)+1];
-  strcpy(s, strvalue);
-  this->strvalue = s;
-}
-
-Tokens::NumberToken::~NumberToken()
-{
-  delete[] strvalue;
-}
-
-const char *Tokens::NumberToken::text()
-{
-  return strvalue;
-}
-
-bool Tokens::NumberToken::isInt()
-{
-  return true;
 }
