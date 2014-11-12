@@ -26,6 +26,7 @@ int main(int argc, char* argv[])
     delete t;
     t = scanner.nextToken();
   }
+  delete t;
 
   handler.showErrorMessages();
   return handler.hasErrors() ? 1 : 0;
