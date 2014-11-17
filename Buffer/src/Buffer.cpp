@@ -3,21 +3,11 @@
 #include <string.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "Buffer.h"
 
-Buffer::Buffer(const char *const fileName):
-  fileName(fileName),
-  off(0)
-{
-  fillBuffer();
-}
-
-Buffer::~Buffer()
-{
-  delete[] buffer;
-}
-
-void printErr(const char* format, ...)
+static void printErr(const char* format, ...)
 {
   // http://stackoverflow.com/questions/1056411/how-to-pass-variable-number-of-arguments-to-printf-sprintf
   va_list argptr;
@@ -27,49 +17,96 @@ void printErr(const char* format, ...)
   fprintf(stderr, ": %s\n", strerror(errno));
 }
 
-FILE* openFileReadOnly(const char* name)
+static int openFileReadOnly(const char* name)
 {
-  FILE* f = nullptr;
-  if ((f = fopen(name, "r")) == nullptr) {
+  int fd;
+  if ((fd = open(name, O_RDONLY/* | O_DIRECT*/)) < 0) {
     printErr("Could not open '%s'", name);
   }
-  return f;
+  return fd;
 }
 
-int fileSize(FILE* f)
+/**
+ * Allocates memory of `alignLen` size and aligns it by `alignLen`.
+ */
+static void mem(char **buf, unsigned alignLen)
 {
-  if (f == nullptr)
-    return 0;
-
-  fseek(f, 0, SEEK_END);
-  int fileSize = ftell(f);
-  rewind(f);
-  return fileSize;
-}
-
-void Buffer::readFile(const char* name)
-{
-  FILE* f = nullptr;
-  if ((f = openFileReadOnly(name)) != nullptr) {
-    bufferSize = fileSize(f);
-    buffer = new char[bufferSize];
-    int numRead = fread(buffer, 1, bufferSize, f);
-    if (numRead < 1 && ferror(f) != 0) {
-      printErr("Could not read from file '%s'", name);
-    }
-    fclose(f);
+  int err = posix_memalign((void **)buf, alignLen, alignLen);
+  if (err != 0) {
+    errno = err;
+    printErr("Could not allocate memory");
   }
+}
+
+unsigned const Buffer::BUFFER_SIZE = 2048;
+
+Buffer::Buffer(const char *const fileName):
+  fileName(fileName),
+  prevBuffer(nullptr),
+  curBuffer(nullptr),
+  off(0),
+  offInFile(0),
+  eofReached(false),
+  fileDescriptor(0)
+{
+  mem(&curBuffer, BUFFER_SIZE);
+  mem(&prevBuffer, BUFFER_SIZE);
+  readNext();
+}
+
+Buffer::~Buffer()
+{
+  if (fileDescriptor > 0 && close(fileDescriptor) < 0)
+    printErr("Could not close file '%s'", fileName);
+  if (prevBuffer != nullptr)
+    delete prevBuffer;
+  if (curBuffer != nullptr)
+    delete curBuffer;
+}
+
+void Buffer::readNext()
+{
+  if (eofReached)
+    return;
+  if (fileDescriptor == 0)
+    fileDescriptor = openFileReadOnly(fileName);
+  if (fileDescriptor < 0) {
+    eofReached = true;
+    return;
+  }
+
+  // swap buffer pointer
+  auto tmp = prevBuffer;
+  prevBuffer = curBuffer;
+  curBuffer = tmp;
+
+  // read data from file
+  int sizeRead = read(fileDescriptor, curBuffer, BUFFER_SIZE);
+  if (sizeRead < 0) {
+    eofReached = true;
+    printErr("Could not read from file '%s'", fileName);
+  }
+  else
+    offInFile += sizeRead;
 }
 
 char Buffer::nextChar()
 {
   off += 1;
-  auto next = off < bufferSize ? buffer[off] : 0;
-  return next;
+  if (off >= offInFile)
+    readNext();
+
+  return currentChar();
 }
+
 char Buffer::currentChar()
 {
-  return buffer[off];
+  if (eofReached)
+    return 0;
+  auto c = curBuffer[off%BUFFER_SIZE];
+  if (c == 0)
+    eofReached = true;
+  return c;
 }
 
 unsigned Buffer::offset()
@@ -79,17 +116,22 @@ unsigned Buffer::offset()
 
 char* Buffer::range(char *buffer, const unsigned start, const unsigned len)
 {
-  strncpy(buffer, this->buffer+start, len);
-  buffer[len] = '\0';
+  auto bufEnd = offInFile%BUFFER_SIZE == 0 ? offInFile-BUFFER_SIZE : offInFile-(offInFile%BUFFER_SIZE);
+
+  // we can copy onyly from the last buffer
+  if (start > bufEnd)
+    strncpy(buffer, this->curBuffer+start, len);
+  // we also need to copy from the previous buffer
+  else {
+    auto readPrev = bufEnd-start;
+    strncpy(buffer, prevBuffer+BUFFER_SIZE-readPrev, readPrev);
+    strncpy(buffer+readPrev, curBuffer, len-readPrev);
+  }
+  buffer[len] = 0;
   return buffer;
 }
 
 void Buffer::setOffset(const unsigned offset)
 {
   off = offset;
-}
-
-void Buffer::fillBuffer()
-{
-  readFile(this->fileName);
 }

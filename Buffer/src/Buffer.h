@@ -35,14 +35,17 @@ public:
   void setOffset(const unsigned offset);
 
 private:
-  unsigned bufferSize;
+  static unsigned const BUFFER_SIZE;
 
   const char *const fileName;
-  char *buffer;
+  char *prevBuffer;
+  char *curBuffer;
   unsigned off;
+  unsigned offInFile;
+  bool eofReached;
+  int fileDescriptor;
 
-  void readFile(const char* name);
-  void fillBuffer();
+  void readNext();
 };
 
 #endif

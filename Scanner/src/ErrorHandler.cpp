@@ -6,7 +6,7 @@
 #include <math.h>
 #include "ErrorHandler.h"
 
-void printErr(const char* format, ...)
+static void printErr(const char* format, ...)
 {
   // http://stackoverflow.com/questions/1056411/how-to-pass-variable-number-of-arguments-to-printf-sprintf
   va_list argptr;
@@ -16,7 +16,7 @@ void printErr(const char* format, ...)
   fprintf(stderr, ": %s\n", strerror(errno));
 }
 
-FILE* openFileReadOnly(const char* name)
+static FILE* openFileReadOnly(const char* name)
 {
   FILE* f = nullptr;
   if ((f = fopen(name, "r")) == nullptr) {
@@ -25,7 +25,7 @@ FILE* openFileReadOnly(const char* name)
   return f;
 }
 
-int fileSize(FILE* f)
+static int fileSize(FILE* f)
 {
   if (f == nullptr)
     return 0;
@@ -36,7 +36,7 @@ int fileSize(FILE* f)
   return fileSize;
 }
 
-unsigned readFile(char **buffer, const char *name)
+static unsigned readFile(char **buffer, const char *name)
 {
   FILE* f = nullptr;
   if ((f = openFileReadOnly(name)) != nullptr) {
