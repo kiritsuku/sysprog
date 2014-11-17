@@ -34,3 +34,6 @@
 
 # Vim files
 **/*.swp
+.ycm_extra_conf.*
+tags
+types_*.taghl
