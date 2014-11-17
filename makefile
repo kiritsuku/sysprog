@@ -32,6 +32,7 @@ clean:
 	rm -rf $(SYMBOLTABLEDIR)/lib/*
 	rm -rf $(SHAREDLIB)/*
 	rm -rf $(SCANNERDIR)/debug/*
+	$(MAKE) all
 
 
 scanner:
