@@ -18,11 +18,6 @@ Scanner::~Scanner()
 {
 }
 
-unsigned Scanner::offset()
-{
-  return lastOffset;
-}
-
 Tokens::Token *Scanner::createNumber()
 {
   unsigned start = lastStart;
@@ -35,9 +30,9 @@ Tokens::Token *Scanner::createNumber()
   auto value = strtol(str, 0, 10);
   if (errno == ERANGE) {
     handler.addError(start, "number too large");
-    return  new Tokens::Token ( Tokens::Error);
+    return  new Tokens::Token(Tokens::Error, lastOffset);
   }
-  return new Tokens::Token(Tokens::Number,value, str);
+  return new Tokens::Token(Tokens::Number, lastOffset, value, str);
 }
 
 Tokens::Token *Scanner::createIdent()
@@ -50,9 +45,9 @@ Tokens::Token *Scanner::createIdent()
 
   auto kw = Tokens::keyword(str);
   if (kw != Tokens::None)
-    return new Tokens::Token(kw);
+    return new Tokens::Token(kw, lastOffset);
   auto sym = symboltable.create(str);
-  return new Tokens::Token (Tokens::Ident , sym);
+  return new Tokens::Token(Tokens::Ident, lastOffset, sym);
 }
 
 Tokens::Token *Scanner::acceptChar(const char c)
@@ -60,7 +55,7 @@ Tokens::Token *Scanner::acceptChar(const char c)
   lastOffset = lastStart;
 
   if (c == 0)
-    return new Tokens::Token(Tokens::Eof);
+    return new Tokens::Token(Tokens::Eof, lastOffset);
 
   auto t = automat.accept(c);
   switch(t){
@@ -69,7 +64,7 @@ Tokens::Token *Scanner::acceptChar(const char c)
 	  handler.addError(lastOffset, "invalid character");
 	  buffer.nextChar();
 	  lastStart = buffer.offset();
-	  return new Tokens::Token (t);}
+	  return new Tokens::Token(t, lastOffset);}
   case Tokens::Ignore:{
 	   auto c = buffer.nextChar();
 	   lastStart = buffer.offset();
@@ -81,7 +76,7 @@ Tokens::Token *Scanner::acceptChar(const char c)
   case Tokens::Str:
 	  return createIdent();
   default:{
-	   Tokens::Token *tmp = new Tokens::Token (t);
+	   Tokens::Token *tmp = new Tokens::Token(t, lastOffset);
 	   auto len = tmp->textLen();
 	   lastStart += len;
 	   buffer.setOffset(lastStart);
@@ -93,7 +88,7 @@ Tokens::Token *Scanner::nextToken()
 {
   auto c = buffer.currentChar();
   if (c == 0)
-    return  new Tokens::Token(Tokens::Eof);
+    return  new Tokens::Token(Tokens::Eof, lastOffset);
 
   return acceptChar(c);
 }

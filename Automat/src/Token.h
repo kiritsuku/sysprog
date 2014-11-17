@@ -40,9 +40,9 @@ public:
 
   class Token {
   public:
-    explicit Token(TokenType type);
-    explicit Token(TokenType type, unsigned value, char *strvalue);
-    explicit Token(TokenType type, Symbol *sym);
+    explicit Token(TokenType type, unsigned offset);
+    explicit Token(TokenType type, unsigned offset, unsigned value, char *strvalue);
+    explicit Token(TokenType type, unsigned offset, Symbol *sym);
      ~Token();
 
     /** The text that is represented by this token. */
@@ -55,14 +55,14 @@ public:
     bool isInt();
 
     TokenType getTokenType ();
-
-
- unsigned value;
+    unsigned getOffset();
 
   private:
     TokenType type;
     Symbol *sym; // todo
     const char *strvalue;
+    unsigned value;
+    unsigned offset;
 
   };
 

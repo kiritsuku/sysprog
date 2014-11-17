@@ -18,8 +18,8 @@ public:
   ~Symboltable();
 
   /**
-   * Creates a symbol to `str` if it does not yet exists and returns a
-   * reference to it.
+   * Creates a symbol that represents `str` if it does not yet exist or
+   * returns the already existing symbol.
    */
   Symbol *create(char *str);
 

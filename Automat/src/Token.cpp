@@ -1,9 +1,10 @@
 #include <string.h>
 #include "Token.h"
 
-Tokens::Token::Token(TokenType type)
+Tokens::Token::Token(TokenType type, unsigned offset)
 {
 	this->type=type;
+  this->offset=offset;
 	this->value=0;
 	this->sym=NULL;
 	this->strvalue=NULL;
@@ -12,16 +13,18 @@ Tokens::Token::Token(TokenType type)
 
 
 }
-Tokens::Token::Token(TokenType type, Symbol *sym)
+Tokens::Token::Token(TokenType type, unsigned offset, Symbol *sym)
 {
 	this->type=type;
+  this->offset=offset;
 	this->value=0;
 	this->sym = sym;
 	this->strvalue=NULL;
 }
-Tokens::Token::Token(TokenType type, unsigned value, char *strvalue)
+Tokens::Token::Token(TokenType type, unsigned offset, unsigned value, char *strvalue)
 {
 	this->type=type;
+  this->offset=offset;
 	this->sym= NULL;
 
 	this->value=value;
@@ -42,6 +45,12 @@ Tokens::Token::~Token()
 	}
 
 }
+
+unsigned Tokens::Token::getOffset()
+{
+  return offset;
+}
+
 const char* Tokens::Token::text()
 {
 	switch ( this->type ){

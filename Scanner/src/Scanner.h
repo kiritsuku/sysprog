@@ -20,11 +20,6 @@ public:
    */
   Tokens::Token *nextToken();
 
-  /**
-   * Returns the offset of the last token.
-   */
-  unsigned offset();
-
 private:
 
 
