@@ -20,7 +20,7 @@ static void printErr(const char* format, ...)
 static int openFileReadOnly(const char* name)
 {
   int fd;
-  if ((fd = open(name, O_RDONLY/* | O_DIRECT*/)) < 0) {
+  if ((fd = open(name, O_RDONLY | O_DIRECT)) < 0) {
     printErr("Could not open '%s'", name);
   }
   return fd;
@@ -81,13 +81,18 @@ void Buffer::readNext()
   curBuffer = tmp;
 
   // read data from file
+  errno = 0;
   int sizeRead = read(fileDescriptor, curBuffer, BUFFER_SIZE);
-  if (sizeRead < 0) {
-    eofReached = true;
-    printErr("Could not read from file '%s'", fileName);
-  }
-  else
+  if (sizeRead == (int) BUFFER_SIZE) {
     offInFile += sizeRead;
+  }
+  else {
+    eofReached = true;
+    if (sizeRead < 0)
+      printErr("Could not read from file '%s'", fileName);
+    else
+      offInFile += sizeRead;
+  }
 }
 
 char Buffer::nextChar()
@@ -101,12 +106,7 @@ char Buffer::nextChar()
 
 char Buffer::currentChar()
 {
-  if (eofReached)
-    return 0;
-  auto c = curBuffer[off%BUFFER_SIZE];
-  if (c == 0)
-    eofReached = true;
-  return c;
+  return curBuffer[off%BUFFER_SIZE];
 }
 
 unsigned Buffer::offset()
