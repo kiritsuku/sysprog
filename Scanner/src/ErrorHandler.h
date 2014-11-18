@@ -1,6 +1,8 @@
 #ifndef ERROR_HANDLER_H_
 #define ERROR_HANDLER_H_
 
+#include "Buffer.h"
+
 class ErrorHandler final {
 public:
   /**
@@ -34,6 +36,7 @@ private:
   unsigned maxErrors;
   Error **errors;
 
+  unsigned readFile(char **buf);
   /** Resizes `errors` if it is too small. */
   void resize();
   /** Used to sort `errors`. */

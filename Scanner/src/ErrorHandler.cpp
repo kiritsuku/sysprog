@@ -1,57 +1,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <errno.h>
-#include <stdarg.h>
 #include <math.h>
 #include "ErrorHandler.h"
-
-static void printErr(const char* format, ...)
-{
-  // http://stackoverflow.com/questions/1056411/how-to-pass-variable-number-of-arguments-to-printf-sprintf
-  va_list argptr;
-  va_start(argptr, format);
-  vfprintf(stderr, format, argptr);
-  va_end(argptr);
-  fprintf(stderr, ": %s\n", strerror(errno));
-}
-
-static FILE* openFileReadOnly(const char* name)
-{
-  FILE* f = nullptr;
-  if ((f = fopen(name, "r")) == nullptr) {
-    printErr("Could not open '%s'", name);
-  }
-  return f;
-}
-
-static int fileSize(FILE* f)
-{
-  if (f == nullptr)
-    return 0;
-
-  fseek(f, 0, SEEK_END);
-  int fileSize = ftell(f);
-  rewind(f);
-  return fileSize;
-}
-
-static unsigned readFile(char **buffer, const char *name)
-{
-  FILE* f = nullptr;
-  if ((f = openFileReadOnly(name)) != nullptr) {
-    auto bufferSize = fileSize(f);
-    auto buf = new char[bufferSize];
-    int numRead = fread(buf, 1, bufferSize, f);
-    if (numRead < 1 && ferror(f) != 0) {
-      printErr("Could not read from file '%s'", name);
-    }
-    fclose(f);
-    *buffer = buf;
-    return bufferSize;
-  }
-  return 0;
-}
 
 ErrorHandler::ErrorHandler(const char *fileName):
   fileName(fileName),
@@ -96,6 +47,11 @@ void ErrorHandler::resize()
   delete[] oldErrors;
 }
 
+/**
+ * Find the start position of the error message.
+ *
+ * The minimum value that can be returned is `offset-partSize`.
+ */
 unsigned startPos(char *buffer, unsigned offset, unsigned partSize)
 {
   if (buffer[offset] == '\n')
@@ -108,6 +64,13 @@ unsigned startPos(char *buffer, unsigned offset, unsigned partSize)
   return buffer[start] != '\n' ? start : start+1;
 }
 
+/**
+ * Find the end position of the error message.
+ *
+ * The maximum value that can be returned is `offset+partSize`.
+ *
+ * `size` is the size of `buffer`.
+ */
 unsigned endPos(char *buffer, unsigned size, unsigned offset, unsigned partSize)
 {
   if (size <= 0)
@@ -154,11 +117,42 @@ void findLine(char *buffer, unsigned *lineCounter, unsigned *lastLinePos, unsign
   }
 }
 
+/**
+ * Read the entire file `fileName` in memory.
+ *
+ * Returns the size of buf.
+ */
+unsigned ErrorHandler::readFile(char **buf)
+{
+  Buffer buffer(fileName);
+  unsigned ALLOC = 1024;
+  unsigned bufSize = ALLOC;
+  auto b = new char[bufSize];
+  unsigned i = 0;
+  char c = buffer.currentChar();
+
+  while (c != 0) {
+    if (i >= bufSize-1) {
+      auto tmp = new char[bufSize+ALLOC];
+      strncpy(tmp, b, bufSize);
+      bufSize += ALLOC;
+      delete[] b;
+      b = tmp;
+    }
+    b[i++] = c;
+    c = buffer.nextChar();
+  }
+
+  b[i] = 0;
+  *buf = b;
+  return i;
+}
+
 void ErrorHandler::showErrorMessages()
 {
   if (hasErrors()) {
     char *content;
-    auto size = readFile(&content, fileName);
+    auto size = readFile(&content);
     // the maximum size of the error message before and after
     // the errors  position
     auto partSize = 30;
