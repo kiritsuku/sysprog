@@ -32,6 +32,7 @@ static int openFileReadOnly(const char* name)
 static void mem(char **buf, unsigned alignLen)
 {
   int err = posix_memalign((void **)buf, alignLen, alignLen);
+  memset(*buf, 0, alignLen);
   if (err != 0) {
     errno = err;
     printErr("Could not allocate memory");
@@ -42,8 +43,6 @@ unsigned const Buffer::BUFFER_SIZE = 1024;
 
 Buffer::Buffer(const char *const fileName):
   fileName(fileName),
-  prevBuffer(nullptr),
-  curBuffer(nullptr),
   off(0),
   offInFile(0),
   eofReached(false),
@@ -58,10 +57,8 @@ Buffer::~Buffer()
 {
   if (fileDescriptor > 0 && close(fileDescriptor) < 0)
     printErr("Could not close file '%s'", fileName);
-  if (prevBuffer != nullptr)
-    delete prevBuffer;
-  if (curBuffer != nullptr)
-    delete curBuffer;
+  free(prevBuffer);
+  free(curBuffer);
 }
 
 void Buffer::readNext()
