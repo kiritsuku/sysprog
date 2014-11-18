@@ -38,7 +38,7 @@ static void mem(char **buf, unsigned alignLen)
   }
 }
 
-unsigned const Buffer::BUFFER_SIZE = 2048;
+unsigned const Buffer::BUFFER_SIZE = 1024;
 
 Buffer::Buffer(const char *const fileName):
   fileName(fileName),
@@ -118,9 +118,9 @@ char* Buffer::range(char *buffer, const unsigned start, const unsigned len)
 {
   auto bufEnd = offInFile%BUFFER_SIZE == 0 ? offInFile-BUFFER_SIZE : offInFile-(offInFile%BUFFER_SIZE);
 
-  // we can copy onyly from the last buffer
+  // we have to copy only from the last buffer
   if (start > bufEnd)
-    strncpy(buffer, this->curBuffer+start, len);
+    strncpy(buffer, curBuffer+start%BUFFER_SIZE, len);
   // we also need to copy from the previous buffer
   else {
     auto readPrev = bufEnd-start;
