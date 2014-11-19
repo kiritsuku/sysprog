@@ -1,13 +1,13 @@
-var
-:=
-555
-var2
-=
-621
-var2
-<:>
-var
-1
-<
-:=
-2
+Token Ident                 Line: 1	Column: 1	Lexem: var
+Token ColonEquals           Line: 1	Column: 4	
+Token Number                Line: 1	Column: 6	Value: 555
+Token Ident                 Line: 2	Column: 1	Lexem: var2
+Token Equals                Line: 2	Column: 5	
+Token Number                Line: 2	Column: 6	Value: 621
+Token Ident                 Line: 3	Column: 1	Lexem: var2
+Token SmallerColonGreater   Line: 3	Column: 6	
+Token Ident                 Line: 3	Column: 10	Lexem: var
+Token Number                Line: 5	Column: 1	Value: 1
+Token Smaller               Line: 5	Column: 2	
+Token ColonEquals           Line: 5	Column: 3	
+Token Number                Line: 5	Column: 5	Value: 2

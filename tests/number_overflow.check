@@ -1,6 +1,6 @@
-111
-<error>
-111
+Token Number                Line: 1	Column: 1	Value: 111
+Token <error>               Line: 1	Column: 5	
+Token Number                Line: 1	Column: 40	Value: 111
 
 1,5: error: number too large
 	111 123456789876543211234567898765

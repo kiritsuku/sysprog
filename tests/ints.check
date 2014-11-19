@@ -1,7 +1,7 @@
-1
-22
-33333333
-444444444
-555
-6
-7777
+Token Number                Line: 1	Column: 1	Value: 1
+Token Number                Line: 1	Column: 3	Value: 22
+Token Number                Line: 1	Column: 6	Value: 33333333
+Token Number                Line: 2	Column: 1	Value: 444444444
+Token Number                Line: 3	Column: 1	Value: 555
+Token Number                Line: 3	Column: 5	Value: 6
+Token Number                Line: 5	Column: 1	Value: 7777
