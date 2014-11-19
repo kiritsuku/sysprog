@@ -45,17 +45,14 @@ public:
     explicit Token(TokenType type, unsigned line, unsigned column, Symbol *sym);
      ~Token();
 
-    /** The text that is represented by this token. */
+    /** A string representation of this token. */
     const char *getValue();
+    /** A string representation of the type of this token. */
     const char *typeText();
     /** The length of `text`. */
     unsigned textLen();
-    /** Returns `true` if this token represents an identifier. */
-    bool isIdent();
-    /** Returns `true` if this token represents an int. */
-    bool isInt();
 
-    TokenType getTokenType ();
+    TokenType getTokenType();
     unsigned getLine();
     unsigned getColumn();
 
@@ -68,9 +65,6 @@ public:
     unsigned column;
 
   };
-
-  static Token *createIdent(Symbol &sym);
-  static Token *createNumber(unsigned value, char *strvalue);
 
   /**
    * Returns the token that corresponds to `c` or `Token::Error` if none

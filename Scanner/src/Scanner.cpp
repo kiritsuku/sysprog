@@ -9,8 +9,7 @@ Scanner::Scanner(Automat &automat, Buffer &buffer, Symboltable &symboltable, Err
   buffer(buffer),
   symboltable(symboltable),
   handler(handler),
-  lastStart(0),
-  lastOffset(0)
+  lastStart(0)
 {
 }
 
@@ -60,15 +59,13 @@ unsigned Scanner::getColumn()
 
 Tokens::Token *Scanner::acceptChar(const char c)
 {
-  lastOffset = lastStart;
-
   if (c == 0)
     return new Tokens::Token(Tokens::Eof, buffer.currentLine(), getColumn());
 
   auto t = automat.accept(c);
   switch(t) {
     case Tokens::Error: {
-      handler.addError(lastOffset, "invalid character");
+      handler.addError(lastStart, "invalid character");
       auto col = getColumn();
       buffer.nextChar();
       lastStart = buffer.offset();

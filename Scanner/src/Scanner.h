@@ -21,14 +21,11 @@ public:
   Tokens::Token *nextToken();
 
 private:
-
-
   Automat &automat;
   Buffer &buffer;
   Symboltable &symboltable;
   ErrorHandler &handler;
   unsigned lastStart;
-  unsigned lastOffset;
 
   unsigned getColumn();
   Tokens::Token *acceptChar(const char c);
