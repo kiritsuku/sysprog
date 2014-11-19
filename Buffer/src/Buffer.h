@@ -15,6 +15,10 @@ public:
    */
   char currentChar();
 
+  unsigned currentLine();
+
+  unsigned currentColumn();
+
   /**
    * Returns the position of the current current character. In other words
    * it returns the number of characters that have already been read.
@@ -44,6 +48,9 @@ private:
   unsigned offInFile;
   bool eofReached;
   int fileDescriptor;
+  char lastChar;
+  unsigned line;
+  unsigned column;
 
   void readNext();
 };

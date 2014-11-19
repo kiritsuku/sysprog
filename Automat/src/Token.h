@@ -40,13 +40,14 @@ public:
 
   class Token {
   public:
-    explicit Token(TokenType type, unsigned offset);
-    explicit Token(TokenType type, unsigned offset, unsigned value, char *strvalue);
-    explicit Token(TokenType type, unsigned offset, Symbol *sym);
+    explicit Token(TokenType type, unsigned line, unsigned column);
+    explicit Token(TokenType type, unsigned line, unsigned column, unsigned value, char *strvalue);
+    explicit Token(TokenType type, unsigned line, unsigned column, Symbol *sym);
      ~Token();
 
     /** The text that is represented by this token. */
-    const char *text();
+    const char *getValue();
+    const char *typeText();
     /** The length of `text`. */
     unsigned textLen();
     /** Returns `true` if this token represents an identifier. */
@@ -55,14 +56,16 @@ public:
     bool isInt();
 
     TokenType getTokenType ();
-    unsigned getOffset();
+    unsigned getLine();
+    unsigned getColumn();
 
   private:
     TokenType type;
     Symbol *sym; // todo
     const char *strvalue;
     unsigned value;
-    unsigned offset;
+    unsigned line;
+    unsigned column;
 
   };
 

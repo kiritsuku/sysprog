@@ -22,7 +22,13 @@ int main(int argc, char* argv[])
 
   auto t = scanner.nextToken();
   while (t->getTokenType() != Tokens::Eof) {
-    printf("%s\n", t->text());
+    printf("Token %-22sLine: %d\tColumn: %d\t", t->typeText(), t->getLine(), t->getColumn());
+    if (t->getTokenType() == Tokens::Ident)
+      printf("Lexem: %s\n", t->getValue());
+    else if (t->getTokenType() == Tokens::Number)
+      printf("Value: %s\n", t->getValue());
+    else
+      printf("\n");
     delete t;
     t = scanner.nextToken();
   }

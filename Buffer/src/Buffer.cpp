@@ -46,7 +46,10 @@ Buffer::Buffer(const char *const fileName):
   off(0),
   offInFile(0),
   eofReached(false),
-  fileDescriptor(0)
+  fileDescriptor(0),
+  lastChar(0),
+  line(1),
+  column(1)
 {
   mem(&curBuffer, BUFFER_SIZE);
   mem(&prevBuffer, BUFFER_SIZE);
@@ -94,16 +97,32 @@ void Buffer::readNext()
 
 char Buffer::nextChar()
 {
-  off += 1;
+  ++off;
+  ++column;
   if (off >= offInFile)
     readNext();
 
-  return currentChar();
+  if (lastChar == '\n') {
+    ++line;
+    column = 1;
+  }
+  lastChar = currentChar();
+  return lastChar;
 }
 
 char Buffer::currentChar()
 {
   return curBuffer[off%BUFFER_SIZE];
+}
+
+unsigned Buffer::currentLine()
+{
+  return line;
+}
+
+unsigned Buffer::currentColumn()
+{
+  return column;
 }
 
 unsigned Buffer::offset()
@@ -113,7 +132,9 @@ unsigned Buffer::offset()
 
 char* Buffer::range(char *buffer, const unsigned start, const unsigned len)
 {
-  auto bufEnd = offInFile%BUFFER_SIZE == 0 ? offInFile-BUFFER_SIZE : offInFile-(offInFile%BUFFER_SIZE);
+  auto bufEnd = offInFile%BUFFER_SIZE == 0
+    ? offInFile-BUFFER_SIZE
+    : offInFile-(offInFile%BUFFER_SIZE);
 
   // we have to copy only from the last buffer
   if (start > bufEnd)
@@ -130,5 +151,12 @@ char* Buffer::range(char *buffer, const unsigned start, const unsigned len)
 
 void Buffer::setOffset(const unsigned offset)
 {
-  off = offset;
+  int change = abs((int)offset-(int)off);
+  if (change < 0) {
+    errno = 0;
+    printErr("It is not allowed to decrease the offset.");
+  } else {
+    column += change;
+    off += change;
+  }
 }

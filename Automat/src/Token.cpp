@@ -1,10 +1,11 @@
 #include <string.h>
 #include "Token.h"
 
-Tokens::Token::Token(TokenType type, unsigned offset)
+Tokens::Token::Token(TokenType type, unsigned line, unsigned column)
 {
 	this->type=type;
-  this->offset=offset;
+  this->line = line;
+  this->column=column;
 	this->value=0;
 	this->sym=NULL;
 	this->strvalue=NULL;
@@ -13,18 +14,20 @@ Tokens::Token::Token(TokenType type, unsigned offset)
 
 
 }
-Tokens::Token::Token(TokenType type, unsigned offset, Symbol *sym)
+Tokens::Token::Token(TokenType type, unsigned line, unsigned column, Symbol *sym)
 {
 	this->type=type;
-  this->offset=offset;
+  this->line = line;
+  this->column=column;
 	this->value=0;
 	this->sym = sym;
 	this->strvalue=NULL;
 }
-Tokens::Token::Token(TokenType type, unsigned offset, unsigned value, char *strvalue)
+Tokens::Token::Token(TokenType type, unsigned line, unsigned column, unsigned value, char *strvalue)
 {
 	this->type=type;
-  this->offset=offset;
+  this->line = line;
+  this->column=column;
 	this->sym= NULL;
 
 	this->value=value;
@@ -46,14 +49,81 @@ Tokens::Token::~Token()
 
 }
 
-unsigned Tokens::Token::getOffset()
+unsigned Tokens::Token::getLine()
 {
-  return offset;
+  return line;
 }
 
-const char* Tokens::Token::text()
+unsigned Tokens::Token::getColumn()
+{
+  return column;
+}
+
+const char* Tokens::Token::typeText()
 {
 	switch ( this->type ){
+	case None:
+		return "<none>";
+	case Ignore:
+		return "<ignore>";
+	case Error:
+		return "<error>";
+	case Eof:
+		return "<eof>";
+	case Int:
+		return "<int>";
+	case Str:
+		return "<str>";
+	case Plus:
+		return "Plus";
+	case Minus:
+		return "Minus";
+	case Div:
+		return "Div";
+	case Mul:
+		return "Mul";
+	case Smaller:
+		return "Smaller";
+	case Greater:
+		return "Greater";
+	case Equals:
+		return "Equals";
+	case ColonEquals:
+		return "ColonEquals";
+	case SmallerColonGreater:
+		return "SmallerColonGreater";
+	case Bang:
+		return "Bang";
+	case And:
+		return "And";
+	case Semi:
+		return "Semi";
+	case LParen:
+		return "LParen";
+	case RParen:
+		return "RParen";
+	case LBrace:
+		return "LBrace";
+	case RBrace:
+		return "RBrace";
+	case LBracket:
+		return "LBracket";
+	case RBracket:
+		return "RBracket";
+	case If:
+		return "If";
+	case While:
+		return "While";
+	case Ident:
+		return "Ident";
+	case Number:
+		return "Number";
+
+	}
+}
+const char* Tokens::Token::getValue()
+{
+	switch (this->type ){
 	case None:
 		return "<none>";
 	case Ignore:
@@ -110,13 +180,12 @@ const char* Tokens::Token::text()
 		return this->sym->ident;
 	case Number:
 		return this->strvalue;
-
 	}
 }
 
 unsigned Tokens::Token::textLen()
 {
-  return strlen(text());
+  return strlen(getValue());
 }
 
 bool Tokens::Token::isIdent()
