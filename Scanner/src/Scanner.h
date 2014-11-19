@@ -29,7 +29,11 @@ private:
   ErrorHandler &handler;
   unsigned lastStart;
   unsigned lastOffset;
+  unsigned column;
+  unsigned lines;
+  unsigned lastLine;
 
+  unsigned getColumn();
   Tokens::Token *acceptChar(const char c);
   Tokens::Token *createNumber();
   Tokens::Token *createIdent();
