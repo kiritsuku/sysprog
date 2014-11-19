@@ -1,18 +1,18 @@
-<error>
-Hello
-<error>
-world
-!
-<error>
-How
-are
-you
-<error>
-Even
-<error>
-more
-errors
-<error>
+Token <error>               Line: 1	Column: 4	
+Token Ident                 Line: 1	Column: 8	Lexem: Hello
+Token <error>               Line: 1	Column: 13	
+Token Ident                 Line: 1	Column: 17	Lexem: world
+Token Bang                  Line: 1	Column: 22	
+Token <error>               Line: 3	Column: 1	
+Token Ident                 Line: 3	Column: 2	Lexem: How
+Token Ident                 Line: 3	Column: 6	Lexem: are
+Token Ident                 Line: 3	Column: 10	Lexem: you
+Token <error>               Line: 3	Column: 13	
+Token Ident                 Line: 5	Column: 1	Lexem: Even
+Token <error>               Line: 5	Column: 6	
+Token Ident                 Line: 5	Column: 8	Lexem: more
+Token Ident                 Line: 5	Column: 13	Lexem: errors
+Token <error>               Line: 5	Column: 20	
 
 1,4: error: invalid character
 	   .   Hello.   world!

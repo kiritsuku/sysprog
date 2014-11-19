@@ -40,34 +40,31 @@ public:
 
   class Token {
   public:
-    explicit Token(TokenType type, unsigned offset);
-    explicit Token(TokenType type, unsigned offset, unsigned value, char *strvalue);
-    explicit Token(TokenType type, unsigned offset, Symbol *sym);
+    explicit Token(TokenType type, unsigned line, unsigned column);
+    explicit Token(TokenType type, unsigned line, unsigned column, unsigned value, char *strvalue);
+    explicit Token(TokenType type, unsigned line, unsigned column, Symbol *sym);
      ~Token();
 
-    /** The text that is represented by this token. */
-    const char *text();
+    /** A string representation of this token. */
+    const char *getValue();
+    /** A string representation of the type of this token. */
+    const char *typeText();
     /** The length of `text`. */
     unsigned textLen();
-    /** Returns `true` if this token represents an identifier. */
-    bool isIdent();
-    /** Returns `true` if this token represents an int. */
-    bool isInt();
 
-    TokenType getTokenType ();
-    unsigned getOffset();
+    TokenType getTokenType();
+    unsigned getLine();
+    unsigned getColumn();
 
   private:
     TokenType type;
     Symbol *sym; // todo
     const char *strvalue;
     unsigned value;
-    unsigned offset;
+    unsigned line;
+    unsigned column;
 
   };
-
-  static Token *createIdent(Symbol &sym);
-  static Token *createNumber(unsigned value, char *strvalue);
 
   /**
    * Returns the token that corresponds to `c` or `Token::Error` if none
