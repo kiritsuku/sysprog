@@ -67,7 +67,10 @@ Tokens::Token *Scanner::acceptChar(const char c)
     case Tokens::Error: {
       handler.addError(lastStart, "invalid character");
       auto col = getColumn();
-      buffer.nextChar();
+      auto len = buffer.offset()-lastStart;
+      // we only have to read the next char if a single char is invalid
+      if (len == 0)
+        buffer.nextChar();
       lastStart = buffer.offset();
       return new Tokens::Token(t, buffer.currentLine(), col);
     }
