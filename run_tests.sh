@@ -43,7 +43,7 @@ function print_err {
 # no parameters expected
 function run_test_file {
   start=`date +%s%N`
-  $cc $test_file > $run_file
+  $cc $test_file "$cc_flags" > $run_file
   end=`date +%s%N`
   duration="$(( (end-start)/1000000 )) ms"
 
@@ -64,8 +64,16 @@ while read -rd "" test_file
 do
   check_file="${test_file%.*}.check"
   run_file="${test_file%.*}.run"
+  flags_file="${test_file%.*}.flags"
 
-  # check if file exists and is readable
+  # if flags file exists read it, otherwise remove flags
+  if [ -r $flags_file ]; then
+    cc_flags=`cat $flags_file`
+  else
+    cc_flags=""
+  fi
+
+  # check if file exists and is readable, otherwise show error
   if [ ! -r $check_file ]; then
     print_err "Error: check file $check_file does not exist"
   else

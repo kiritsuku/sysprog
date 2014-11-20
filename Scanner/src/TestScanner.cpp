@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "Scanner.h"
 #include "Automat.h"
 #include "Buffer.h"
@@ -14,6 +15,16 @@ int main(int argc, char* argv[])
   }
 
   auto fileName(argv[1]);
+  auto noErr = false;
+  for (auto i = 2; i < argc; ++i) {
+    if (strcmp(argv[i], "--noerr") == 0)
+      noErr = true;
+    else if (strcmp(argv[i], "") != 0) {
+      fprintf(stderr, "Error: Unknown flag '%s'.\n", argv[i]);
+      return -1;
+    }
+  }
+
   Automat automat;
   Buffer buffer(fileName);
   Symboltable symboltable;
@@ -34,7 +45,8 @@ int main(int argc, char* argv[])
   }
   delete t;
 
-  handler.showErrorMessages();
+  if (!noErr)
+    handler.showErrorMessages();
   return handler.hasErrors() ? 1 : 0;
 }
 
