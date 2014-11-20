@@ -158,6 +158,9 @@ void Buffer::setOffset(const unsigned offset)
   } else {
     column += change;
     off += change;
+
+    if (off >= offInFile)
+      readNext();
     lastChar = curBuffer[off%BUFFER_SIZE];
   }
 }
