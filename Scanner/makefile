@@ -1,6 +1,6 @@
 
 CC = g++
-FLAGS = -W -Wall -Wextra -g -std=c++11
+FLAGS = -W -Wall -Wextra -g -std=c++11 -O2
 
 SRCDIR = src
 OBJDIR = debug
