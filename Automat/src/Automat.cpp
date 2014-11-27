@@ -72,7 +72,7 @@ Tokens::TokenType Automat::StartState::accept(const char c)
 
     case '/':
       outer.state = outer.signState;
-      return Tokens::Ignore;
+      return Tokens::None;
 
     case '+': case '-': case '*': case '>': case '=':
     case '!': case '&': case ';': case '(': case ')': case '{':

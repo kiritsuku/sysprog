@@ -1,0 +1,6 @@
+Token Mul                   Line: 1	Column: 1	
+Token Div                   Line: 1	Column: 2	
+Token Equals                Line: 1	Column: 3	
+Token Mul                   Line: 2	Column: 1	
+Token Div                   Line: 2	Column: 2	
+Token Ident                 Line: 2	Column: 3	Lexem: abc
