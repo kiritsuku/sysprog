@@ -1,0 +1,80 @@
+\documentclass[a4paper,11pt,titlepage,openany,oneside]{scrbook}
+\usepackage{ngerman}
+\usepackage[utf8]{inputenc}
+% Don't use indent on new paragraph
+\usepackage[parfill]{parskip}
+% Add links to table of contents
+\usepackage{hyperref}
+
+\title{Projektdokumentation}
+\author{}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\chapter{Architektur}
+
+Der Compiler besteht aus mehreren Komponenten:
+\begin{itemize}
+    \item \textit{Buffer} - Zuständig für das Lesen aus einer Datei. Der Buffer implementiert, wie der Name sagt, einen eigenen Zeichenpuffer, d.h. er greift nicht auf dem vom Betriebssystem bereitgestellten Puffer zurück. Deshalb kann der Buffer nur eine begrenzte Anzahl von Zeichen rückwärts lesen - nämlich geneu die, die noch im Puffer sind. Man sollte deshalb möglichst nur neue Zeichen lesen und nicht in der Datei zurückspringen.
+    \item \textit{Token} - Die Token des Compilers.
+    \item \textit{Automat} - Produziert Token aus einem Zeichenstrom. Der Automat besitzt einen internen Zustand, der je nach eingelesenem Zeichen wechseln kann. Jedes an den Automaten übergebene Zeichen kann deshalb einen Seiteneffekt haben - man muss die Ausgabe des Automaten also zwischenspeichern wenn man sie öfter benötigt.
+    \item \textit{Symboltable} - Speichert gefundene Identifier. Um erkennen zu können ob ein Identifier schon ein mal gefunden wurde und ob es sich bei dem Identifier um ein Schlüsselwort handelt werden diese in der Symboltable gespeichert. Sie ermöglicht ein schnelles abspeichern und wiederfinden der Identifier. Außerdem gibt sie ein sogenanntes Symbol zurück, das als Referenz auf einen Identifier dient und zusätzliche nützliche Informationen über den Identifier speichert.
+    \item \textit{ErrorHandler} - Speichert die Position und eine Fehlermeldung zu einem gefundenen Fehler. Der ErrorHandler kann gefundene Fehler zusammen mit ihrer Position, der Fehlermeldung und der Zeile, in der der Fehler vorkam, auf der Konsole ausgeben.
+    \item \textit{Scanner} - Kommuniziert mit Buffer, Automat, Symboltable und ErrorHandler um einem Tokenstrom zu produzieren. Dabei nimmt der Scanner so lange Zeichen aus dem Buffer entgegen und gibt diese an den Automat weiter bis dieser einen Token produzieren kann. Der produzierte Token wird daraufhin an die Komponente, die den Scanner aufruft, weitergegeben. Tritt ein Fehler beim produzieren eines Tokens auf, z.B. weil ein ungültiges Zeichen gefunden wurde, dann wird dieser Fehler im ErrorHandler gespeichert und der Scanner gibt ein Error Token aus. Wird ein Identifier Token erkannt prüft der Scanner mit Hilfe der Symboltable ob es sich um ein Schlüsselwort handelt und gibt dementsprechend ein anderes Token zurück. Sobald der Buffer keine weiteren Zeichen mehr zur Verfügung stellt, gibt der Scanner ein EOF Token aus.
+\end{itemize}
+
+\chapter{Wichtige Verzeichnisse und Dateien}
+
+\begin{verbatim}
+|-- Automat
+|   |-- makefile
+|   |-- src
+|-- Buffer
+|   |-- makefile
+|   |-- src
+|-- Scanner
+|   |-- makefile
+|   |-- src
+|-- Symboltable
+|   |-- makefile
+|   |-- src
+|-- sharedlib
+|-- doc
+|-- makefile
+|-- run_tests.sh
+|-- tests
+\end{verbatim}
+
+\begin{itemize}
+  \item Die Verzeichnisse \textit{Automat}, \textit{Buffer}, \textit{Scanner}, \textit{Symboltable} sind auf die Verzeichnisse \textit{debug}, \textit{lib} und \textit{src} aufgeteilt, wobei die ersten beiden automatisch vom \textit{makefile} erzeugt werden wenn sie nicht vorhanden sind.
+  \item \textit{sharedlib} beinhaltet alle gelinkten library Dateien, die zur späteren Ausführung des Compilers benötigt werden.
+    \item \textit{doc} beinhaltet die Projektdokumentation.
+    \item \textit{run\_tests.sh} ist die Testsuite. Sie durchsucht das Verzeichnis \textit{tests} nach vorhandenen Tests und führt diese aus.
+    \item \textit{tests} beinhaltet alle Tests.
+\end{itemize}
+
+Um das Projekt zu bauen genügt es das oberste \textit{makefile} auszuführen. Um zu überprüfen ob alles funktioniert sollte nach dem Bauen des Projekts zuerst die Testsuite ausgeführt werden.
+
+Möchte man den Compiler manuell ausführen muss man zuallererst die library Dateien exportieren:
+
+\begin{verbatim}
+$ export LD_LIBRARY_PATH=sharedlib:$LD_LIBRARY_PATH
+\end{verbatim}
+
+\section{Testsuite}
+
+Die Datei \textit{run\_tests.sh} verfügt über folgende Funktionalität:
+
+\begin{itemize}
+  \item Alle Dateien in \textit{tests}, die die Endung \textit{.test} besitzen werden als Eingabe für den Compiler verwendet.
+  \item Zu jeder \textit{.test} Datei muss es eine \textit{.check} Datei geben. Diese beinhaltet die Ausgabe des Compilers. Die Testsuite prüft ob der Inhalt dieser Datei mit der tatsächlich produzierten Ausgabe des Compilers übereinstimmt.
+  \item Optional kann noch eine \textit{.flags} Datei angegeben werden. Diese beinhaltet Argumente für die Kommandozeile, die an den Compiler übergeben werden.
+  \item Schlägt ein Test fehl wird eine \textit{.run} Datei angelegt, die die tatsächliche Ausgabe der Compilers beinhaltet.
+\end{itemize}
+
+\end{document}
