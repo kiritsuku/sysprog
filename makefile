@@ -1,8 +1,3 @@
-#
-#	baut das komplette Scanner Projekt
-#
-
-
 AUTOMATDIR = Automat
 BUFFERDIR = Buffer
 SYMBOLTABLEDIR = Symboltable
@@ -11,7 +6,7 @@ SHAREDLIB = sharedlib
 
 MKDIR = mkdir -p
 
-all: directories bufferLib symboltableLib automatLib scanner
+all: directories bufferLib symboltableLib automatLib scannerLib
 	@echo "target all"
 
 directories:
@@ -25,7 +20,6 @@ directories:
 	$(MKDIR) $(SCANNERDIR)/debug
 	$(MKDIR) $(SHAREDLIB)
 
-
 clean:
 	rm -rf $(AUTOMATDIR)/lib/*
 	rm -rf $(BUFFERDIR)/lib/*
@@ -33,7 +27,6 @@ clean:
 	rm -rf $(SHAREDLIB)/*
 	rm -rf $(SCANNERDIR)/debug/*
 	$(MAKE) all
-
 
 scanner:
 	$(MAKE) -C $(SCANNERDIR) makeTestScanner
@@ -44,9 +37,8 @@ automatLib:
 bufferLib:
 	$(MAKE) -C $(BUFFERDIR) BufferLib
 
-# scannerLib wird erst fuer den Parser Teil benoetigt
-#scannerLib:
-#	$(MAKE) -C $(SCANNERDIR) ScannerLib
+scannerLib:
+	$(MAKE) -C $(SCANNERDIR) ScannerLib
 
 symboltableLib:
 	$(MAKE) -C $(SYMBOLTABLEDIR) SymboltableLib
