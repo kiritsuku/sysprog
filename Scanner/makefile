@@ -18,6 +18,7 @@ OBJS = $(OBJDIR)/Scanner.o \
 	$(OBJDIR)/ErrorHandler.o
 
 OBJSFORSCANNERLIB =  \
+	$(LIBDIR)/ErrorHandler.o \
 	$(LIBDIR)/Scanner.o
 
 

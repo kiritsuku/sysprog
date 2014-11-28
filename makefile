@@ -2,12 +2,13 @@ AUTOMATDIR = Automat
 BUFFERDIR = Buffer
 SYMBOLTABLEDIR = Symboltable
 SCANNERDIR = Scanner
+PARSERDIR = Parser
 SHAREDLIB = sharedlib
 
 MKDIR = mkdir -p
 
-all: directories bufferLib symboltableLib automatLib scannerLib
-	@echo "target all"
+all: directories bufferLib symboltableLib automatLib scannerLib parser
+	@echo "build all"
 
 directories:
 	$(MKDIR) $(AUTOMATDIR)/lib
@@ -18,15 +19,26 @@ directories:
 	$(MKDIR) $(SYMBOLTABLEDIR)/debug
 	$(MKDIR) $(SCANNERDIR)/lib
 	$(MKDIR) $(SCANNERDIR)/debug
+	$(MKDIR) $(PARSERDIR)/lib
+	$(MKDIR) $(PARSERDIR)/debug
 	$(MKDIR) $(SHAREDLIB)
 
 clean:
 	rm -rf $(AUTOMATDIR)/lib/*
+	rm -rf $(AUTOMATDIR)/debug/*
 	rm -rf $(BUFFERDIR)/lib/*
+	rm -rf $(BUFFERDIR)/debug/*
 	rm -rf $(SYMBOLTABLEDIR)/lib/*
-	rm -rf $(SHAREDLIB)/*
+	rm -rf $(SYMBOLTABLEDIR)/debug/*
+	rm -rf $(SCANNERDIR)/lib/*
 	rm -rf $(SCANNERDIR)/debug/*
+	rm -rf $(PARSERDIR)/lib/*
+	rm -rf $(PARSERDIR)/debug/*
+	rm -rf $(SHAREDLIB)/*
 	$(MAKE) all
+
+parser:
+	$(MAKE) -C $(PARSERDIR) makeTestParser
 
 scanner:
 	$(MAKE) -C $(SCANNERDIR) makeTestScanner
