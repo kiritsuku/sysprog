@@ -5,6 +5,7 @@
 \usepackage[parfill]{parskip}
 % Add links to table of contents
 \usepackage{hyperref}
+\usepackage{tikz}
 
 \title{Projektdokumentation}
 \author{}
@@ -76,5 +77,108 @@ Die Datei \textit{run\_tests.sh} verfügt über folgende Funktionalität:
   \item Optional kann noch eine \textit{.flags} Datei angegeben werden. Diese beinhaltet Argumente für die Kommandozeile, die an den Compiler übergeben werden.
   \item Schlägt ein Test fehl wird eine \textit{.run} Datei angelegt, die die tatsächliche Ausgabe der Compilers beinhaltet.
 \end{itemize}
+
+\chapter{Codedokumentation}
+
+\section{Automat}
+Die Funktionsweise des Automaten wird durch das folgende Diagramm verdeutlicht:
+
+% Created with http://madebyevan.com/fsm/
+\begin{center}
+\begin{tikzpicture}[scale=0.2]
+\tikzstyle{every node}+=[inner sep=0pt]
+\draw [black] (16.7,-16) circle (3);
+\draw (16.7,-16) node {$Start$};
+\draw [black] (25.4,-1.1) circle (3);
+\draw (25.4,-1.1) node {$Ident$};
+\draw [black] (1.8,-26) circle (3);
+\draw (1.8,-26) node {$Int$};
+\draw [black] (44.7,-19.9) circle (3);
+\draw (44.7,-19.9) node {$Smaller$};
+\draw [black] (46.1,-32.3) circle (3);
+\draw (46.1,-32.3) node {$Colon$};
+\draw [black] (23,-38) circle (3);
+\draw (23,-38) node {$Sign$};
+\draw [black] (34.8,-50.3) circle (3);
+\draw (34.8,-50.3) node {$Comment$};
+\draw [black] (64,-32.3) circle (3);
+\draw (64,-32.3) node {$SmallerColon$};
+\draw [black] (50.3,-44.7) circle (3);
+\draw (50.3,-44.7) node {$ColonEquals$};
+\draw [black] (18.2,-50.3) circle (3);
+\draw (18.2,-50.3) node {$CommentEnd$};
+\draw [black] (14.16,-14.426) arc (265.94323:-22.05677:2.25);
+\draw (9.98,-9.77) node [above] {$sonst$};
+\fill [black] (16.4,-13.03) -- (16.96,-12.26) -- (15.96,-12.19);
+\draw [black] (6.9,-14.2) -- (13.75,-15.46);
+\fill [black] (13.75,-15.46) -- (13.05,-14.82) -- (12.87,-15.81);
+\draw [black] (24.355,-3.911) arc (-22.45479:-38.10589:41.659);
+\fill [black] (24.35,-3.91) -- (23.59,-4.46) -- (24.51,-4.84);
+\draw (22.48,-10.25) node [right] {$a..zA..Z$};
+\draw [black] (28.363,-1.491) arc (110.20708:-177.79292:2.25);
+\draw (31.62,-6.19) node [right] {$a..zA..Z0..9$};
+\fill [black] (26.89,-3.69) -- (26.7,-4.61) -- (27.64,-4.27);
+\draw [black] (14.607,-18.148) arc (-46.6021:-65.66354:36.463);
+\fill [black] (4.58,-24.88) -- (5.52,-25) -- (5.1,-24.09);
+\draw (12.28,-22.43) node [below] {$0..9$};
+\draw [black] (2.433,-28.92) arc (39.96376:-248.03624:2.25);
+\draw (-1.57,-33.22) node [below] {$0..9$};
+\fill [black] (-0.13,-28.28) -- (-1.07,-28.41) -- (-0.42,-29.18);
+\draw [black] (3.955,-23.914) arc (132.03381:115.70055:42.381);
+\fill [black] (13.95,-17.2) -- (13.02,-17.1) -- (13.45,-18);
+\draw (5.56,-19.7) node [above] {$sonst$};
+\draw [black] (17.584,-13.135) arc (160.12576:139.31356:31.593);
+\fill [black] (17.58,-13.13) -- (18.33,-12.55) -- (17.39,-12.21);
+\draw (19.36,-6.7) node [left] {$sonst$};
+\draw [black] (41.7,-19.885) arc (-91.19157:-104.66736:95.135);
+\fill [black] (41.7,-19.88) -- (40.91,-19.37) -- (40.89,-20.37);
+\draw (30.11,-19.62) node [below] {$<$};
+\draw [black] (19.475,-17.141) arc (66.99673:54.99339:132.256);
+\fill [black] (43.66,-30.55) -- (43.29,-29.68) -- (42.72,-30.5);
+\draw (32.77,-22.71) node [above] {$:$};
+\draw [black] (17.839,-18.775) arc (21.36327:10.5963:90.178);
+\fill [black] (22.5,-35.04) -- (22.84,-34.16) -- (21.86,-34.35);
+\draw (21.32,-26.23) node [right] {$/$};
+\draw [black] (25.08,-40.16) -- (32.72,-48.14);
+\fill [black] (32.72,-48.14) -- (32.53,-47.21) -- (31.81,-47.9);
+\draw (28.37,-45.62) node [left] {$*$};
+\draw [black] (21.568,-35.364) arc (-153.35121:-174.68921:45.989);
+\fill [black] (16.88,-18.99) -- (16.46,-19.84) -- (17.45,-19.74);
+\draw (17.69,-27.96) node [left] {$sonst$};
+\draw [black] (47.22,-21.52) -- (61.48,-30.68);
+\fill [black] (61.48,-30.68) -- (61.07,-29.83) -- (60.53,-30.67);
+\draw (53.5,-26.6) node [below] {$:$};
+\draw [black] (19.697,-16.14) arc (86.69443:77.44664:138.285);
+\fill [black] (19.7,-16.14) -- (20.47,-16.69) -- (20.52,-15.69);
+\draw (31.85,-16.44) node [above] {$sonst$};
+\draw [black] (47.06,-35.14) -- (49.34,-41.86);
+\fill [black] (49.34,-41.86) -- (49.55,-40.94) -- (48.61,-41.26);
+\draw (47.44,-39.22) node [left] {$=$};
+\draw [black] (43.367,-31.064) arc (-114.79715:-123.21273:188.325);
+\fill [black] (19.2,-17.66) -- (19.59,-18.52) -- (20.14,-17.68);
+\draw (27.9,-25.31) node [below] {$sonst$};
+\draw [black] (37.48,-48.977) arc (144:-144:2.25);
+\draw (42.05,-50.3) node [right] {$sonst$};
+\fill [black] (37.48,-51.62) -- (37.83,-52.5) -- (38.42,-51.69);
+\draw [black] (32.009,-51.392) arc (-73.14481:-106.85519:19.001);
+\fill [black] (20.99,-51.39) -- (21.61,-52.1) -- (21.9,-51.15);
+\draw (26.5,-52.71) node [below] {$*$};
+\draw [black] (21.058,-49.395) arc (103.80179:76.19821:22.812);
+\fill [black] (31.94,-49.4) -- (31.28,-48.72) -- (31.05,-49.69);
+\draw (26.5,-48.24) node [above] {$sonst$};
+\draw [black] (16.712,-47.696) arc (-152.7312:-202.2607:34.615);
+\fill [black] (15.44,-18.72) -- (14.68,-19.27) -- (15.6,-19.65);
+\draw (12.33,-33.37) node [left] {$/$};
+\draw [black] (61.78,-34.31) -- (52.52,-42.69);
+\fill [black] (52.52,-42.69) -- (53.45,-42.52) -- (52.78,-41.78);
+\draw (55.79,-38.01) node [above] {$=$};
+\draw [black] (19.499,-14.923) arc (108.72765:33.24353:37.117);
+\fill [black] (19.5,-14.92) -- (20.42,-15.14) -- (20.1,-14.19);
+\draw (46.36,-14.38) node [above] {$sonst$};
+\draw [black] (47.6,-43.392) arc (-116.89514:-144.11056:81.574);
+\fill [black] (18.41,-18.46) -- (18.48,-19.4) -- (19.29,-18.82);
+\draw (28.36,-33.16) node [below] {$sonst$};
+\end{tikzpicture}
+\end{center}
 
 \end{document}
