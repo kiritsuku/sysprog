@@ -35,9 +35,9 @@ Tokens::Token::Token(TokenType type, unsigned line, unsigned column, unsigned va
 
 Tokens::Token::~Token()
 {
-	if (this->getTokenType() == Ident || this->getTokenType() == Number) {
-		delete[] this->strvalue;
-	}
+  if (this->getTokenType() == Ident || this->getTokenType() == Number) {
+    delete[] this->strvalue;
+  }
 }
 
 unsigned Tokens::Token::getLine()
@@ -50,9 +50,19 @@ unsigned Tokens::Token::getColumn()
   return column;
 }
 
+unsigned Tokens::Token::getInt()
+{
+  return value;
+}
+
+Symbol *Tokens::Token::symbol()
+{
+  return sym;
+}
+
 const char* Tokens::Token::typeText()
 {
-	switch (this->type) {
+  switch (this->type) {
     case None:
       return "<none>";
     case Ignore:
@@ -101,20 +111,28 @@ const char* Tokens::Token::typeText()
       return "LBracket";
     case RBracket:
       return "RBracket";
-    case If:
+    case KwIf:
       return "If";
-    case While:
+    case KwElse:
+      return "Else";
+    case KwWhile:
       return "While";
+    case KwWrite:
+      return "Write";
+    case KwRead:
+      return "Read";
+    case KwInt:
+      return "Int";
     case Ident:
       return "Ident";
     case Number:
       return "Number";
-	}
+  }
 }
 
 const char* Tokens::Token::getValue()
 {
-	switch (this->type) {
+  switch (this->type) {
     case None:
       return "<none>";
     case Ignore:
@@ -163,15 +181,23 @@ const char* Tokens::Token::getValue()
       return "[";
     case RBracket:
       return "]";
-    case If:
+    case KwIf:
       return "if";
-    case While:
+    case KwElse:
+      return "else";
+    case KwWhile:
       return "while";
+    case KwWrite:
+      return "write";
+    case KwRead:
+      return "read";
+    case KwInt:
+      return "int";
     case Ident:
       return this->sym->ident;
     case Number:
       return this->strvalue;
-	}
+  }
 }
 
 unsigned Tokens::Token::textLen()
@@ -181,15 +207,23 @@ unsigned Tokens::Token::textLen()
 
 Tokens::TokenType Tokens::Token::getTokenType()
 {
-	return this->type;
+  return this->type;
 }
 
 Tokens::TokenType Tokens::keyword(const char *text)
 {
   if (strcmp(text, "if") == 0 || strcmp(text, "IF") == 0)
-    return If;
+    return KwIf;
+  else if (strcmp(text, "else") == 0 || strcmp(text, "ELSE") == 0)
+    return KwElse;
   else if (strcmp(text, "while") == 0 || strcmp(text, "WHILE") == 0)
-    return While;
+    return KwWhile;
+  else if (strcmp(text, "int") == 0)
+    return KwInt;
+  else if (strcmp(text, "write") == 0)
+    return KwWrite;
+  else if (strcmp(text, "read") == 0)
+    return KwRead;
   else
     return None;
 }
