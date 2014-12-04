@@ -11,12 +11,12 @@ LIBDIR = lib
 SHAREDLIB = ../sharedlib
 
 OBJS = \
-	$(OBJDIR)/Tree.o \
+	$(OBJDIR)/Nodes.o \
 	$(OBJDIR)/Parser.o \
 	$(OBJDIR)/TestParser.o
 
 OBJSLIB = \
-	$(OBJDIR)/Tree.o \
+	$(OBJDIR)/Nodes.o \
 	$(LIBDIR)/Parser.o
 
 # $^ liste der abhaengigkeiten

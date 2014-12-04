@@ -5,6 +5,7 @@
 #include "Scanner.h"
 #include "Symboltable.h"
 #include "ErrorHandler.h"
+#include "Nodes.h"
 
 class Parser final {
 public:
@@ -14,6 +15,19 @@ public:
 private:
   Scanner &scanner;
   ErrorHandler &handler;
+
+  Tokens::Token *token;
+
+  Nodes::Node *parseProg();
+  Nodes::Node *parseDecls();
+  Nodes::Node *parseStatements();
+  Nodes::Node *parseDecl();
+  Nodes::Node *parseArray();
+  unsigned parseInt();
+  Symbol *parseIdent();
+
+  void accept(Tokens::TokenType tpe);
+  void nextToken();
 };
 
 #endif
