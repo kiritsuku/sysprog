@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
   Parser parser(scanner, handler);
 
   auto node = parser.parse();
-  (void) node;
+  delete node;
 
   if (!noErr)
     handler.showErrorMessages();
