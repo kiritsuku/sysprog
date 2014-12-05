@@ -15,6 +15,7 @@ Parser::~Parser()
 
 Nodes::Node *Parser::parse()
 {
+  nextToken();
   return parseProg();
 }
 
@@ -22,6 +23,7 @@ Nodes::Node *Parser::parseProg()
 {
   auto decls = parseDecls();
   auto stmts = parseStatements();
+  accept(Tokens::Eof);
 
   return new Nodes::Node(Nodes::Prog, decls, stmts);
 }
