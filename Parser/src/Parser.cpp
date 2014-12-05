@@ -104,13 +104,14 @@ Nodes::Node *Parser::parseStatement()
       auto ident = parseIdent();
       auto idx = parseIndex();
       accept(Tokens::RParen);
-      return new Nodes::Node(Nodes::StatementWrite, idx, ident);
+      return new Nodes::Node(Nodes::StatementRead, idx, ident);
     }
     case Tokens::LBrace: {
       accept(Tokens::LBrace);
       auto stmts = parseStatements();
       accept(Tokens::RBrace);
-      return new Nodes::Node(Nodes::Statements, stmts);
+      return new Nodes::Node(Nodes::Statements, stmts,
+          new Nodes::Node(Nodes::Nil));
     }
     case Tokens::KwIf: {
       accept(Tokens::KwIf);
@@ -140,7 +141,6 @@ Nodes::Node *Parser::parseStatement()
       // can't be reached
       return nullptr;
   }
-  return nullptr;
 }
 
 Nodes::Node *Parser::parseExp()
