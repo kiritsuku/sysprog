@@ -237,8 +237,7 @@ unsigned Parser::parseInt()
   }
 
   auto i = token->getInt();
-  delete token;
-  nextToken();
+  accept(Tokens::Number);
   return i;
 }
 
@@ -249,8 +248,7 @@ Symbol *Parser::parseIdent()
   }
 
   auto sym = token->symbol();
-  delete token;
-  nextToken();
+  accept(Tokens::Ident);
   return sym;
 }
 
