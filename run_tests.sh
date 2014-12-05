@@ -28,7 +28,8 @@ function print_col {
 #}}}
 
 test_dir="`pwd`/tests"
-cc="Scanner/debug/ScannerTest"
+scanner_cc="Scanner/debug/ScannerTest"
+parser_cc="Parser/debug/TestParser"
 errors=0
 
 # export path to libs
@@ -42,8 +43,22 @@ function print_err {
 
 # no parameters expected
 function run_test_file {
+  # extracts the name of the directory where the test is located
+  prefix=`perl -pe 's|(.+?)/.+|\1|' <<< "${test_file#$test_dir/}"`
+  case "$prefix" in
+    scanner)
+      cmd_cc="$scanner_cc"
+      ;;
+    parser)
+      cmd_cc="$parser_cc"
+      ;;
+    *)
+      print_err "Error: no test suite found that could handle '$prefix'"
+      ;;
+  esac
+
   start=`date +%s%N`
-  $cc $test_file "$cc_flags" > $run_file
+  $cmd_cc $test_file "$cc_flags" > $run_file
   end=`date +%s%N`
   duration="$(( (end-start)/1000000 )) ms"
 
