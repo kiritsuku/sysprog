@@ -7,7 +7,7 @@ SHAREDLIB = sharedlib
 
 MKDIR = mkdir -p
 
-all: directories bufferLib symboltableLib automatLib scannerLib parser
+all: directories bufferLib symboltableLib automatLib scannerLib scanner parser
 	@echo "build all"
 
 directories:
