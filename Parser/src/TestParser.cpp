@@ -7,6 +7,7 @@
 #include "Symboltable.h"
 #include "ErrorHandler.h"
 #include "Parser.h"
+#include "Nodes.h"
 
 int main(int argc, char* argv[])
 {
@@ -32,6 +33,9 @@ int main(int argc, char* argv[])
   ErrorHandler handler(fileName);
   Scanner scanner(automat, buffer, symboltable, handler);
   Parser parser(scanner, handler);
+
+  auto node = parser.parse();
+  (void) node;
 
   if (!noErr)
     handler.showErrorMessages();

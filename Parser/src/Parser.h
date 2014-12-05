@@ -12,6 +12,8 @@ public:
   Parser(Scanner &scanner, ErrorHandler &handler);
   ~Parser();
 
+  Nodes::Node *parse();
+
 private:
   Scanner &scanner;
   ErrorHandler &handler;
@@ -20,13 +22,20 @@ private:
 
   Nodes::Node *parseProg();
   Nodes::Node *parseDecls();
-  Nodes::Node *parseStatements();
   Nodes::Node *parseDecl();
   Nodes::Node *parseArray();
+  Nodes::Node *parseStatements();
+  Nodes::Node *parseStatement();
+  Nodes::Node *parseExp();
+  Nodes::Node *parseExp2();
+  Nodes::Node *parseIndex();
+  Nodes::Node *parseOpExp();
+  Nodes::Node *parseOp();
   unsigned parseInt();
   Symbol *parseIdent();
 
   void accept(Tokens::TokenType tpe);
+  void err();
   void nextToken();
 };
 
