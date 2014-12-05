@@ -59,7 +59,7 @@ namespace Nodes {
     Node *stmts();
     Node *nextDecl();
     Node *arr();
-    Symbol *name();
+    Symbol *symbol();
     unsigned size();
 
   private:

@@ -148,3 +148,13 @@ Node *Node::arr()
 {
   return _arr;
 }
+
+Symbol *Node::symbol()
+{
+  return _name;
+}
+
+unsigned Node::size()
+{
+  return _size;
+}
