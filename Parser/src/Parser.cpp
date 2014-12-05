@@ -164,7 +164,7 @@ Nodes::Node *Parser::parseExp2()
       auto idx = parseIndex();
       return new Nodes::Node(Nodes::Exp2Ident, idx, ident);
     }
-    case Tokens::Int: {
+    case Tokens::Number: {
       auto i = parseInt();
       return new Nodes::Node(Nodes::Exp2Int, i);
     }
@@ -232,7 +232,7 @@ Nodes::Node *Parser::parseOp()
 
 unsigned Parser::parseInt()
 {
-  if (token->getTokenType() != Tokens::Int) {
+  if (token->getTokenType() != Tokens::Number) {
     err();
   }
 
