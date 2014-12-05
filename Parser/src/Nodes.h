@@ -33,9 +33,9 @@ namespace Nodes {
 
   class Node final {
   public:
-    // Prog, OpExp, Statements
+    // Prog, Decls, OpExp, Statements
     explicit Node(NodeType _tpe, Node *_decls, Node *_stmts);
-    // Decls, Index, Exp2, Exp2Minus, Exp2Neg, StatementWrite, Statements
+    // Index, Exp2, Exp2Minus, Exp2Neg, StatementWrite, Statements
     explicit Node(NodeType _tpe, Node *_nextDecl);
     // DeclArray, Exp2Ident, StatementRead
     explicit Node(NodeType _tpe, Node *_arr, Symbol *_name);

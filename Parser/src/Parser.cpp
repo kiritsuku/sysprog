@@ -39,14 +39,7 @@ Nodes::Node *Parser::parseDecls()
 
   auto decl = parseDecl();
   accept(Tokens::Semi);
-
-  switch (decl->tpe()) {
-    case Nodes::Nil:
-      return decl;
-
-    default:
-      return new Nodes::Node(Nodes::Decls, parseDecls());
-  }
+  return new Nodes::Node(Nodes::Decls, decl, parseDecls());
 }
 
 Nodes::Node *Parser::parseDecl()
@@ -228,6 +221,7 @@ Nodes::Node *Parser::parseOp()
     case Tokens::Equals:
     case Tokens::SmallerColonGreater:
     case Tokens::And:
+      delete token;
       nextToken();
       return new Nodes::Node(Nodes::Op, token);
 
@@ -243,6 +237,7 @@ unsigned Parser::parseInt()
   }
 
   auto i = token->getInt();
+  delete token;
   nextToken();
   return i;
 }
@@ -254,6 +249,7 @@ Symbol *Parser::parseIdent()
   }
 
   auto sym = token->symbol();
+  delete token;
   nextToken();
   return sym;
 }
