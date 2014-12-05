@@ -52,6 +52,8 @@ namespace Nodes {
     // StatementIf
     explicit Node(NodeType _tpe, Node *_exp, Node *_ifStmt, Node *_elseStmt);
 
+    ~Node();
+
     NodeType tpe();
     Node *decls();
     Node *stmts();

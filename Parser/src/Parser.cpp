@@ -5,12 +5,15 @@
 
 Parser::Parser(Scanner &scanner, ErrorHandler &handler):
   scanner(scanner),
-  handler(handler)
+  handler(handler),
+  token(nullptr)
 {
 }
 
 Parser::~Parser()
 {
+  if (token != nullptr)
+    delete token;
 }
 
 Nodes::Node *Parser::parse()
@@ -260,6 +263,7 @@ void Parser::accept(Tokens::TokenType tpe)
   if (token->getTokenType() != tpe) {
     err();
   }
+  delete token;
   nextToken();
 }
 

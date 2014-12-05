@@ -110,6 +110,20 @@ Node::Node(NodeType _tpe, Node *_exp, Node *_ifStmt, Node *_elseStmt):
 {
 }
 
+Node::~Node()
+{
+  if (_decls != nullptr)
+    delete _decls;
+  if (_stmts != nullptr)
+    delete _stmts;
+  if (_nextDecl != nullptr)
+    delete _nextDecl;
+  if (_arr != nullptr)
+    delete _arr;
+  if (_token != nullptr)
+    delete _token;
+}
+
 NodeType Node::tpe()
 {
   return _tpe;
