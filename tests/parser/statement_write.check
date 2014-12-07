@@ -1,3 +1,3 @@
-write(1)
-write(value)
+write(1);
+write(value);
 
