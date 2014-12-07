@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include "Parser.h"
 
 Parser::Parser(Scanner &scanner, ErrorHandler &handler):
@@ -144,7 +145,7 @@ Nodes::Node *Parser::parseStatement()
       return new Nodes::Node(Nodes::StatementWhile, exp, stmt);
     }
     default:
-      err();
+      err(6, Tokens::Ident, Tokens::KwWrite, Tokens::KwRead, Tokens::LBrace, Tokens::KwIf, Tokens::KwWhile);
       // can't be reached
       return nullptr;
   }
@@ -186,7 +187,7 @@ Nodes::Node *Parser::parseExp2()
       return new Nodes::Node(Nodes::Exp2Neg, exp2);
     }
     default:
-      err();
+      err(5, Tokens::LParen, Tokens::Ident, Tokens::Number, Tokens::Minus, Tokens::Bang);
       // can't be reached
       return nullptr;
   }
@@ -252,7 +253,7 @@ Nodes::Node *Parser::parseOp()
 unsigned Parser::parseInt()
 {
   if (token->getTokenType() != Tokens::Number) {
-    err();
+    err(1, Tokens::Number);
   }
 
   auto i = token->getInt();
@@ -263,7 +264,7 @@ unsigned Parser::parseInt()
 Symbol *Parser::parseIdent()
 {
   if (token->getTokenType() != Tokens::Ident) {
-    err();
+    err(1, Tokens::Ident);
   }
 
   auto sym = token->symbol();
@@ -274,16 +275,30 @@ Symbol *Parser::parseIdent()
 void Parser::accept(Tokens::TokenType tpe)
 {
   if (token->getTokenType() != tpe) {
-    err();
+    err(1, tpe);
   }
   delete token;
   nextToken();
 }
 
-void Parser::err()
+void Parser::err(unsigned count, ...)
 {
-  fprintf(stderr, "unexpected token '%s' at line '%d', column '%d'\n",
+  fprintf(stderr, "unexpected token '%s' at line '%d', column '%d'",
       token->getValue(), token->getLine(), token->getColumn());
+
+  va_list argptr;
+  va_start(argptr, count);
+  if (count > 0) {
+    auto t = (Tokens::TokenType) va_arg(argptr, int);
+    fprintf(stderr, ". Expected: '%s'", Tokens::valueOf(t));
+  }
+  for (unsigned i = 1; i < count; ++i) {
+    auto t = (Tokens::TokenType) va_arg(argptr, int);
+    fprintf(stderr, " or '%s'", Tokens::valueOf(t));
+  }
+  va_end(argptr);
+
+  fprintf(stderr, ".\n");
   exit(1);
 }
 

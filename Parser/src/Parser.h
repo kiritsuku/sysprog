@@ -35,7 +35,15 @@ private:
   Symbol *parseIdent();
 
   void accept(Tokens::TokenType tpe);
-  void err();
+
+  /**
+   * Prints an error message about an unexpected token and terminates the
+   * program. Can show a number of tokens that are expected instead.
+   *
+   * Expects a variable number of TokenType arguments.
+   * `count` is the number of arguments that are passed to this function.
+   */
+  void err(unsigned count, ...);
   void nextToken();
 };
 
