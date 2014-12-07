@@ -82,7 +82,7 @@ void mkString(std::stringstream &ss, Nodes::Node *node, unsigned nesting)
       ss << ") ";
       mkString(ss, node->ifStmt(), nesting);
       mkNesting(ss, nesting);
-      ss << "else ";
+      ss << " else ";
       mkString(ss, node->elseStmt(), nesting);
       break;
 
