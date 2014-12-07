@@ -240,11 +240,11 @@ Nodes::Node *Parser::parseOp()
     case Tokens::Greater:
     case Tokens::Equals:
     case Tokens::SmallerColonGreater:
-    case Tokens::And:
-      delete token;
+    case Tokens::And: {
+      auto n = new Nodes::Node(Nodes::Op, token);
       nextToken();
-      return new Nodes::Node(Nodes::Op, token);
-
+      return n;
+    }
     default:
       return new Nodes::Node(Nodes::Nil);
   }
