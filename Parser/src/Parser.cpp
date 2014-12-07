@@ -72,8 +72,16 @@ Nodes::Node *Parser::parseArray()
 
 Nodes::Node *Parser::parseStatements()
 {
-  if (token->getTokenType() == Tokens::Eof) {
-    return new Nodes::Node(Nodes::Nil);
+  switch (token->getTokenType()) {
+    case Tokens::Ident:
+    case Tokens::KwWrite:
+    case Tokens::KwRead:
+    case Tokens::LBrace:
+    case Tokens::KwIf:
+    case Tokens::KwWhile:
+      break;
+    default:
+      return new Nodes::Node(Nodes::Nil);
   }
 
   auto stmt = parseStatement();
