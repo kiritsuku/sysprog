@@ -159,6 +159,8 @@ Node *Node::stmts()
   switch (_tpe) {
     case Prog:
       return _n2;
+    case StatementBlock:
+      return _n1;
     default:
       err("stmts");
       return nullptr;
@@ -376,7 +378,7 @@ const char *Node::tpeName()
 
 void Node::err(const char *fnName)
 {
-  fprintf(stderr, "unsupported call of '%s' for node type %s",
+  fprintf(stderr, "unsupported call of '%s' for node type %s\n",
       fnName, tpeName());
   exit(1);
 }

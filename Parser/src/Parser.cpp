@@ -110,8 +110,7 @@ Nodes::Node *Parser::parseStatement()
       accept(Tokens::LBrace);
       auto stmts = parseStatements();
       accept(Tokens::RBrace);
-      return new Nodes::Node(Nodes::Statements, stmts,
-          new Nodes::Node(Nodes::Nil));
+      return new Nodes::Node(Nodes::StatementBlock, stmts);
     }
     case Tokens::KwIf: {
       accept(Tokens::KwIf);
@@ -200,8 +199,20 @@ Nodes::Node *Parser::parseIndex()
 
 Nodes::Node *Parser::parseOpExp()
 {
-  if (token->getTokenType() == Tokens::Eof) {
-    return new Nodes::Node(Nodes::Nil);
+  switch (token->getTokenType()) {
+    case Tokens::Plus:
+    case Tokens::Minus:
+    case Tokens::Mul:
+    case Tokens::Div:
+    case Tokens::Smaller:
+    case Tokens::Greater:
+    case Tokens::Equals:
+    case Tokens::SmallerColonGreater:
+    case Tokens::And:
+      break;
+
+    default:
+      return new Nodes::Node(Nodes::Nil);
   }
 
   auto op = parseOp();

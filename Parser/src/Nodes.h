@@ -16,9 +16,9 @@ namespace Nodes {
     StatementIdent,
     StatementWrite,
     StatementRead,
-    StatementBlock,
     StatementIf,
     StatementWhile,
+    StatementBlock,
     Exp,
     Exp2,
     Exp2Ident,
@@ -33,7 +33,7 @@ namespace Nodes {
 
   class Node final {
   public:
-    // Index, Exp2, Exp2Minus, Exp2Neg, StatementWrite, Statements
+    // Index, Exp2, Exp2Minus, Exp2Neg, StatementWrite, StatementBlock
     explicit Node(NodeType tpe, Node *n1);
     // Prog, Decls, OpExp, Statements, StatementWhile
     explicit Node(NodeType tpe, Node *n1, Node *n2);
@@ -62,7 +62,7 @@ namespace Nodes {
     Node *decls();
     /** Only defined for: Statements, StatementWhile */
     Node *stmt();
-    /** Only defined for: Prog */
+    /** Only defined for: Prog, StatementBlock */
     Node *stmts();
     /** Only defined for: Decls */
     Node *nextDecl();
