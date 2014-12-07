@@ -1,6 +1,8 @@
 
 CC = g++
 FLAGS = -W -Wall -Wextra -g -std=c++11 -O2
+LIBFLAGS = -g -std=c++11 -O2
+LINKS = -I../Automat/src -I../Buffer/src -I../Symboltable/src -L../sharedlib -lAutomat -lBuffer -lSymboltable
 
 SRCDIR = src
 OBJDIR = debug
@@ -16,6 +18,7 @@ OBJS = $(OBJDIR)/Scanner.o \
 	$(OBJDIR)/ErrorHandler.o
 
 OBJSFORSCANNERLIB =  \
+	$(LIBDIR)/ErrorHandler.o \
 	$(LIBDIR)/Scanner.o
 
 
@@ -43,29 +46,21 @@ OBJSFORSCANNERLIB =  \
 # Variante  mit guten Kenntnissen
 # $^ liste der abhaengigkeiten
 makeTestScanner: $(OBJS)
-	$(CC) $(FLAGS) $^ -I../Automat/src -I../Buffer/src -I../Symboltable/src -L../sharedlib -lAutomat -lBuffer -lSymboltable -o $(BINDIR)/ScannerTest
+	$(CC) $(FLAGS) $^ $(LINKS) -o $(BINDIR)/ScannerTest
 
 # $@ name des object files
 # $< erste abhaengigkeit
 $(OBJDIR)/%.o :  $(SRCDIR)/%.cpp
-	$(CC) $(FLAGS) -c -I../Automat/src -I../Buffer/src -I../Symboltable/src -L../sharedlib -lAutomat -lBuffer -lSymboltable -o $@  $<
+	$(CC) $(FLAGS) -c $(LINKS) -o $@  $<
 
 # loeschen aller files im verzeichnis $(OBJDIR) und $(LIBDIR) und neu bauen
 cleanScanner:
 	rm -rf $(OBJDIR)/*
 	$(MAKE) makeTestScanner
 
-
-
 ## erstellen der shared library
+ScannerLib: $(OBJSFORSCANNERLIB)
+	$(CC) -shared -o $(SHAREDLIB)/libScanner.so $^
 
-# erst wichtig fuer den Parser Teil
-#
-#ScannerLib:$(OBJSFORSCANNERLIB)
-#		g++ -shared  -o $(SHAREDLIB)/libScanner.so $^
-#
-#
-#$(LIBDIR)/%.o :  $(SRCDIR)/%.cpp
-##	@mkdir -p `dirname $(OBJDIR)/$*.o`
-#	@echo "g++ $*.cpp"
-#	g++ -g  -c -fPIC  -o $@  $<
+$(LIBDIR)/%.o : $(SRCDIR)/%.cpp
+	$(CC) $(LIBFLAGS) -c -fPIC $(LINKS) -o $@ $<

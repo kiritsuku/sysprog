@@ -7,36 +7,40 @@ class Tokens final {
 
 public:
 
-	enum TokenType{
-		None,
-		Ignore,
-		Error,
-		Eof,
-		Int,
-		Str,
-		Plus,
-		Minus,
-		Div,
-		Mul,
-		Smaller,
-		Greater,
-		Equals,
-		ColonEquals,
-		SmallerColonGreater,
-		Bang,
-		And,
-		Semi,
-		LParen,
-		RParen,
-		LBrace,
-		RBrace,
-		LBracket,
-		RBracket,
-		If,
-		While,
-		Ident,
-		Number
-	};
+  enum TokenType{
+    None,
+    Ignore,
+    Error,
+    Eof,
+    Int,
+    Str,
+    Plus,
+    Minus,
+    Div,
+    Mul,
+    Smaller,
+    Greater,
+    Equals,
+    ColonEquals,
+    SmallerColonGreater,
+    Bang,
+    And,
+    Semi,
+    LParen,
+    RParen,
+    LBrace,
+    RBrace,
+    LBracket,
+    RBracket,
+    Ident,
+    Number,
+    KwIf,
+    KwWhile,
+    KwInt,
+    KwWrite,
+    KwRead,
+    KwElse,
+  };
 
   class Token {
   public:
@@ -55,6 +59,8 @@ public:
     TokenType getTokenType();
     unsigned getLine();
     unsigned getColumn();
+    unsigned getInt();
+    Symbol *symbol();
 
   private:
     TokenType type;
@@ -65,6 +71,9 @@ public:
     unsigned column;
 
   };
+
+  /** The character value(s) this token type represents. */
+  static const char *valueOf(TokenType t);
 
   /**
    * Returns the token that corresponds to `c` or `Token::Error` if none
