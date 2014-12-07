@@ -82,8 +82,10 @@ void mkString(std::stringstream &ss, Nodes::Node *node, unsigned nesting)
       ss << ") ";
       mkString(ss, node->ifStmt(), nesting);
       mkNesting(ss, nesting);
-      ss << " else ";
-      mkString(ss, node->elseStmt(), nesting);
+      if (node->elseStmt()->tpe() != Nodes::Nil) {
+        ss << " else ";
+        mkString(ss, node->elseStmt(), nesting);
+      }
       break;
 
     case Nodes::StatementWhile:
