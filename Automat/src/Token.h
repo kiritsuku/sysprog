@@ -72,6 +72,9 @@ public:
 
   };
 
+  /** The character value(s) this token type represents. */
+  static const char *valueOf(TokenType t);
+
   /**
    * Returns the token that corresponds to `c` or `Token::Error` if none
    * correspondence exists.

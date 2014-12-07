@@ -133,6 +133,18 @@ const char* Tokens::Token::typeText()
 const char* Tokens::Token::getValue()
 {
   switch (this->type) {
+    case Ident:
+      return this->sym->ident;
+    case Number:
+      return this->strvalue;
+    default:
+      return valueOf(this->type);
+  }
+}
+
+const char *Tokens::valueOf(TokenType t)
+{
+  switch (t) {
     case None:
       return "<none>";
     case Ignore:
@@ -194,9 +206,9 @@ const char* Tokens::Token::getValue()
     case KwInt:
       return "int";
     case Ident:
-      return this->sym->ident;
+      return "<ident>";
     case Number:
-      return this->strvalue;
+      return "<number>";
   }
 }
 
