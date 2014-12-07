@@ -40,51 +40,94 @@ void mkString(std::stringstream &ss, Nodes::Node *node)
       break;
 
     case Nodes::Statements:
+      mkString(ss, node->stmt());
+      ss << "\n";
+      mkString(ss, node->nextStmt());
       break;
 
     case Nodes::StatementIdent:
+      ss << node->symbol()->ident;
+      mkString(ss, node->index());
+      ss << " := ";
+      mkString(ss, node->exp());
       break;
 
     case Nodes::StatementWrite:
+      ss << "write(";
+      mkString(ss, node->exp());
+      ss << ")";
       break;
 
     case Nodes::StatementRead:
-      break;
-
-    case Nodes::StatementBlock:
+      ss << "read(" << node->symbol()->ident;
+      mkString(ss, node->index());
+      ss << ")";
       break;
 
     case Nodes::StatementIf:
+      ss << "if(";
+      mkString(ss, node->exp());
+      ss << ") ";
+      mkString(ss, node->ifStmt());
+      ss << "else ";
+      mkString(ss, node->elseStmt());
       break;
 
     case Nodes::StatementWhile:
+      ss << "while(";
+      mkString(ss, node->exp());
+      ss << ") ";
+      mkString(ss, node->stmt());
       break;
 
+    case Nodes::StatementBlock:
+      ss << "{\n";
+      mkString(ss, node->stmts());
+      ss << "\n}\n";
+
     case Nodes::Exp:
+      mkString(ss, node->exp2());
+      mkString(ss, node->op());
       break;
 
     case Nodes::Exp2:
+      ss << "(";
+      mkString(ss, node->exp());
+      ss << ")";
       break;
 
     case Nodes::Exp2Ident:
+      ss << node->symbol()->ident;
+      mkString(ss, node->index());
       break;
 
     case Nodes::Exp2Int:
+      ss << node->intValue();
       break;
 
     case Nodes::Exp2Minus:
+      ss << "-";
+      mkString(ss, node->exp2());
       break;
 
     case Nodes::Exp2Neg:
+      ss << "!";
+      mkString(ss, node->exp2());
       break;
 
     case Nodes::Index:
+      ss << "[";
+      mkString(ss, node->exp());
+      ss << "]";
       break;
 
     case Nodes::OpExp:
+      mkString(ss, node->op());
+      mkString(ss, node->exp());
       break;
 
     case Nodes::Op:
+      ss << node->token()->getValue();
       break;
 
     case Nodes::Nil:
