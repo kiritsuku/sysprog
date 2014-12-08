@@ -157,6 +157,7 @@ void Typer::typeCheck(Node *node)
 
     case Index:
       typeCheck(node->exp());
+      node->setType(Type::IntArray);
       break;
 
     case OpExp:
