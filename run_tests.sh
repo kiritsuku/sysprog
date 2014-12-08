@@ -62,7 +62,7 @@ function run_test_file {
   esac
 
   start=`date +%s%N`
-  $cmd_cc $test_file "$cc_flags" > $run_file
+  $cmd_cc $test_file "$cc_flags" > $run_file 2>&1
   end=`date +%s%N`
   duration="$(( (end-start)/1000000 )) ms"
 

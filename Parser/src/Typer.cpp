@@ -24,9 +24,7 @@ void Typer::typeCheck(Node *node)
       if (node->symbol()->type() != Type::NoType)
         err("identifier already defined");
       else {
-        auto s = node->arr()->symbol();
-
-        if (s->type() == Type::IntArray)
+        if (node->symbol()->type() == Type::IntArray)
           node->symbol()->setType(Type::IntArray);
         else
           node->symbol()->setType(Type::Int);
