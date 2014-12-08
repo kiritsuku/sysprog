@@ -104,22 +104,57 @@ void Typer::typeCheck(Node *node)
       typeCheck(node->stmts());
       break;
 
-    case Exp:
-      break;
+    case Exp: {
+      typeCheck(node->exp2());
+      typeCheck(node->op());
 
+      auto et = node->exp2()->type();
+      auto ot = node->op()->type();
+
+      if (ot == Type::NoType)
+        node->setType(et);
+      else if (et != ot)
+        err("operator is not defined on expression");
+      else
+        node->setType(et);
+      break;
+    }
     case Exp2:
+      typeCheck(node->exp());
+      node->setType(node->exp()->type());
       break;
 
-    case Exp2Ident:
-      break;
+    case Exp2Ident: {
+      typeCheck(node->index());
 
+      auto st = node->symbol()->type();
+      auto it = node->index()->type();
+
+      if (st == Type::NoType)
+        err("identifier not defined");
+      else if (st == Type::Int && it == Type::NoType)
+        node->setType(st);
+      else if (st == Type::IntArray && it == Type::IntArray)
+        node->setType(Type::Int);
+      else
+        err("no primitive type");
+      break;
+    }
     case Exp2Int:
+      node->setType(Type::Int);
       break;
 
     case Exp2Minus:
+      typeCheck(node->exp());
+      node->setType(node->exp()->type());
       break;
 
     case Exp2Neg:
+      typeCheck(node->exp());
+      if (node->exp()->type() != Type::Int)
+        err("can't negate non int type");
+      else
+        node->setType(Type::Int);
       break;
 
     case Index:
@@ -127,9 +162,13 @@ void Typer::typeCheck(Node *node)
       break;
 
     case OpExp:
+      typeCheck(node->op());
+      typeCheck(node->exp());
+      node->setType(node->exp()->type());
       break;
 
     case Op:
+      node->setType(Type::Int);
       break;
 
     case Nil:
