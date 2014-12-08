@@ -73,16 +73,35 @@ void Typer::typeCheck(Node *node)
       typeCheck(node->exp());
       break;
 
-    case StatementRead:
+    case StatementRead: {
+      typeCheck(node->index());
+
+      auto st = node->symbol()->type();
+      if (st == Type::NoType)
+        err("identifier not defined");
+      else {
+        auto it = node->index()->type();
+        if (!(
+              (st == Type::Int && it == Type::NoType)
+            ||(st == Type::IntArray && it == Type::IntArray)))
+          err("incompatible types");
+      }
       break;
+    }
 
     case StatementIf:
+      typeCheck(node->exp());
+      typeCheck(node->ifStmt());
+      typeCheck(node->elseStmt());
       break;
 
     case StatementWhile:
+      typeCheck(node->exp());
+      typeCheck(node->stmt());
       break;
 
     case StatementBlock:
+      typeCheck(node->stmts());
       break;
 
     case Exp:
@@ -104,6 +123,7 @@ void Typer::typeCheck(Node *node)
       break;
 
     case Index:
+      typeCheck(node->exp());
       break;
 
     case OpExp:
