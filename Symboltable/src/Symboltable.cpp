@@ -82,7 +82,8 @@ void Symboltable::resizeCreate(Symbol *sym)
   data[i] = sym;
 }
 
-Symbol::Symbol(char const *ident)
+Symbol::Symbol(char const *ident):
+  _type(Type::NoType)
 {
   auto len = strlen(ident);
   this->ident = new char[len+1];
@@ -92,4 +93,14 @@ Symbol::Symbol(char const *ident)
 Symbol::~Symbol()
 {
   delete[] ident;
+}
+
+Type Symbol::type()
+{
+  return _type;
+}
+
+void Symbol::setType(Type t)
+{
+  _type = t;
 }

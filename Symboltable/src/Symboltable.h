@@ -1,6 +1,13 @@
 #ifndef SYMBOLTABLE_H_
 #define SYMBOLTABLE_H_
 
+enum class Type {
+  Int,
+  IntArray,
+  NoType,
+};
+
+
 class Symbol final {
 public:
   explicit Symbol(char const *ident);
@@ -10,6 +17,12 @@ public:
    * The identifier represented by this symbol.
    */
   char const *ident;
+
+  Type type();
+  void setType(Type t);
+
+private:
+  Type _type;
 };
 
 class Symboltable final {

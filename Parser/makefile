@@ -11,11 +11,13 @@ LIBDIR = lib
 SHAREDLIB = ../sharedlib
 
 OBJS = \
+	$(OBJDIR)/Typer.o \
 	$(OBJDIR)/Nodes.o \
 	$(OBJDIR)/Parser.o \
 	$(OBJDIR)/TestParser.o
 
 OBJSLIB = \
+	$(OBJDIR)/Typer.o \
 	$(OBJDIR)/Nodes.o \
 	$(LIBDIR)/Parser.o
 

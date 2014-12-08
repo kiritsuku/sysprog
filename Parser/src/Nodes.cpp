@@ -6,6 +6,7 @@ using namespace Nodes;
 
 Node::Node(NodeType tpe, Node *n1):
   _tpe(tpe),
+  _type(Type::NoType),
   _n1(n1),
   _n2(nullptr),
   _n3(nullptr),
@@ -17,6 +18,7 @@ Node::Node(NodeType tpe, Node *n1):
 
 Node::Node(NodeType tpe, Node *n1, Node *n2):
   _tpe(tpe),
+  _type(Type::NoType),
   _n1(n1),
   _n2(n2),
   _n3(nullptr),
@@ -28,6 +30,7 @@ Node::Node(NodeType tpe, Node *n1, Node *n2):
 
 Node::Node(NodeType tpe, Node *n1, Node *n2, Node *n3):
   _tpe(tpe),
+  _type(Type::NoType),
   _n1(n1),
   _n2(n2),
   _n3(n3),
@@ -39,6 +42,7 @@ Node::Node(NodeType tpe, Node *n1, Node *n2, Node *n3):
 
 Node::Node(NodeType tpe, Symbol *symbol):
   _tpe(tpe),
+  _type(Type::NoType),
   _n1(nullptr),
   _n2(nullptr),
   _n3(nullptr),
@@ -50,6 +54,7 @@ Node::Node(NodeType tpe, Symbol *symbol):
 
 Node::Node(NodeType tpe, Node *n1, Symbol *symbol):
   _tpe(tpe),
+  _type(Type::NoType),
   _n1(n1),
   _n2(nullptr),
   _n3(nullptr),
@@ -61,6 +66,7 @@ Node::Node(NodeType tpe, Node *n1, Symbol *symbol):
 
 Node::Node(NodeType tpe, Symbol *symbol, Node *n1, Node *n2):
   _tpe(tpe),
+  _type(Type::NoType),
   _n1(n1),
   _n2(n2),
   _n3(nullptr),
@@ -72,6 +78,7 @@ Node::Node(NodeType tpe, Symbol *symbol, Node *n1, Node *n2):
 
 Node::Node(NodeType tpe):
   _tpe(tpe),
+  _type(Type::NoType),
   _n1(nullptr),
   _n2(nullptr),
   _n3(nullptr),
@@ -83,6 +90,7 @@ Node::Node(NodeType tpe):
 
 Node::Node(NodeType tpe, unsigned intValue):
   _tpe(tpe),
+  _type(Type::NoType),
   _n1(nullptr),
   _n2(nullptr),
   _n3(nullptr),
@@ -94,6 +102,7 @@ Node::Node(NodeType tpe, unsigned intValue):
 
 Node::Node(NodeType tpe, Tokens::Token *token):
   _tpe(tpe),
+  _type(Type::NoType),
   _n1(nullptr),
   _n2(nullptr),
   _n3(nullptr),
@@ -113,6 +122,16 @@ Node::~Node()
     delete _n3;
   if (_token != nullptr)
     delete _token;
+}
+
+Type Node::type()
+{
+  return _type;
+}
+
+void Node::setType(Type t)
+{
+  _type = t;
 }
 
 NodeType Node::tpe()
@@ -373,6 +392,9 @@ const char *Node::tpeName()
       return "Op";
     case Nil:
       return "Nil";
+    default:
+      // can't be reached
+      return nullptr;
   }
 }
 

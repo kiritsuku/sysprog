@@ -91,8 +91,12 @@ namespace Nodes {
 
     const char *tpeName();
 
+    Type type();
+    void setType(Type t);
+
   private:
     NodeType _tpe;
+    Type _type;
     Node *_n1;
     Node *_n2;
     Node *_n3;
