@@ -14,7 +14,7 @@ OBJS = \
 	$(OBJDIR)/Typer.o \
 	$(OBJDIR)/Nodes.o \
 	$(OBJDIR)/Parser.o \
-	$(OBJDIR)/TestParser.o
+	$(OBJDIR)/TestHelper.o
 
 OBJSLIB = \
 	$(OBJDIR)/Typer.o \
@@ -22,8 +22,11 @@ OBJSLIB = \
 	$(LIBDIR)/Parser.o
 
 # $^ liste der abhaengigkeiten
-makeTestParser: $(OBJS)
+testParser: $(OBJS) $(OBJDIR)/TestParser.o
 	$(CC) $(FLAGS) $^ $(LINKS) -o $(BINDIR)/TestParser
+
+testTyper: $(OBJS) $(OBJDIR)/TestTyper.o
+	$(CC) $(FLAGS) $^ $(LINKS) -o $(BINDIR)/TestTyper
 
 # $@ name des object files
 # $< erste abhaengigkeit
@@ -33,6 +36,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 clean:
 	rm -rf $(OBJDIR)/*
 	$(MAKE) testParser
+	$(MAKE) testTyper
 
 # erstellen der shared library
 ParserLib: $(OBJSLIB)

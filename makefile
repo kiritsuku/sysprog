@@ -38,7 +38,7 @@ clean:
 	$(MAKE) all
 
 parser:
-	$(MAKE) -C $(PARSERDIR) makeTestParser
+	$(MAKE) -C $(PARSERDIR) testParser testTyper
 
 scanner:
 	$(MAKE) -C $(SCANNERDIR) makeTestScanner

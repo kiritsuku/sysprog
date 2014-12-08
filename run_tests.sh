@@ -30,6 +30,7 @@ function print_col {
 test_dir="`pwd`/tests"
 scanner_cc="Scanner/debug/ScannerTest"
 parser_cc="Parser/debug/TestParser"
+typer_cc="Parser/debug/TestTyper"
 errors=0
 
 # export path to libs
@@ -51,6 +52,9 @@ function run_test_file {
       ;;
     parser)
       cmd_cc="$parser_cc"
+      ;;
+    typer)
+      cmd_cc="$typer_cc"
       ;;
     *)
       print_err "Error: no test suite found that could handle '$prefix'"

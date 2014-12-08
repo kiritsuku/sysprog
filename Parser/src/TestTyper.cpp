@@ -2,9 +2,10 @@
 
 void executeTest(Parser &parser)
 {
+  Typer typer;
+
   auto node = parser.parse();
-  std::stringstream ss;
-  mkString(ss, node, 0);
-  printf("%s\n", ss.str().c_str());
+  typer.typeCheck(node);
+  printf("typechecking successful\n");
   delete node;
 }
