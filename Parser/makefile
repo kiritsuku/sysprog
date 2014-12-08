@@ -12,12 +12,14 @@ SHAREDLIB = ../sharedlib
 
 OBJS = \
 	$(OBJDIR)/Typer.o \
+	$(OBJDIR)/CodeGen.o \
 	$(OBJDIR)/Nodes.o \
 	$(OBJDIR)/Parser.o \
 	$(OBJDIR)/TestHelper.o
 
 OBJSLIB = \
 	$(OBJDIR)/Typer.o \
+	$(OBJDIR)/CodeGen.o \
 	$(OBJDIR)/Nodes.o \
 	$(LIBDIR)/Parser.o
 
@@ -27,6 +29,9 @@ testParser: $(OBJS) $(OBJDIR)/TestParser.o
 
 testTyper: $(OBJS) $(OBJDIR)/TestTyper.o
 	$(CC) $(FLAGS) $^ $(LINKS) -o $(BINDIR)/TestTyper
+
+testCodeGen: $(OBJS) $(OBJDIR)/TestCodeGen.o
+	$(CC) $(FLAGS) $^ $(LINKS) -o $(BINDIR)/TestCodeGen
 
 # $@ name des object files
 # $< erste abhaengigkeit
