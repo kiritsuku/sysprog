@@ -143,13 +143,13 @@ void Typer::typeCheck(Node *node)
       break;
 
     case Exp2Minus:
-      typeCheck(node->exp());
-      node->setType(node->exp()->type());
+      typeCheck(node->exp2());
+      node->setType(node->exp2()->type());
       break;
 
     case Exp2Neg:
-      typeCheck(node->exp());
-      if (node->exp()->type() != Type::Int)
+      typeCheck(node->exp2());
+      if (node->exp2()->type() != Type::Int)
         err("can't negate non int type");
       else
         node->setType(Type::Int);
