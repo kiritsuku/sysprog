@@ -59,6 +59,7 @@ void CodeGen::makeCode(std::stringstream &ss, Node *node)
       break;
 
     case StatementWrite:
+      makeCode(ss, node->exp());
       ss << "PRI\n";
       break;
 
@@ -89,7 +90,7 @@ void CodeGen::makeCode(std::stringstream &ss, Node *node)
       ss << "JIN #" << l2 << "\n";
       makeCode(ss, node->stmt());
       ss << "JMP #" << l1 << "\n";
-      ss << "#" << l2 << "NOP\n";
+      ss << "#" << l2 << " NOP\n";
       break;
     }
 
@@ -103,8 +104,11 @@ void CodeGen::makeCode(std::stringstream &ss, Node *node)
         makeCode(ss, node->exp2());
       else {
         auto oet = node->op()->op()->token()->getTokenType();
-        if (oet == Tokens::Greater)
+        if (oet == Tokens::Greater) {
           makeCode(ss, node->op());
+          makeCode(ss, node->exp2());
+          ss << "LES\n";
+        }
         else if (oet == Tokens::SmallerColonGreater) {
           makeCode(ss, node->exp2());
           makeCode(ss, node->op());
