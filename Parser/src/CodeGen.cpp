@@ -72,24 +72,24 @@ void CodeGen::makeCode(std::stringstream &ss, Node *node)
     case StatementIf: {
       makeCode(ss, node->exp());
       auto l1 = mkLabel();
-      ss << "JIN #" << l1;
+      ss << "JIN #" << l1 << "\n";
       makeCode(ss, node->ifStmt());
       auto l2 = mkLabel();
-      ss << "JMP #" << l2;
-      ss << "#" << l1 << " NOP";
+      ss << "JMP #" << l2 << "\n";
+      ss << "#" << l1 << " NOP\n";
       makeCode(ss, node->elseStmt());
-      ss << "#" << l2 << " NOP";
+      ss << "#" << l2 << " NOP\n";
       break;
     }
     case StatementWhile: {
       auto l1 = mkLabel();
-      ss << "#" << l1 << " NOP";
+      ss << "#" << l1 << " NOP\n";
       makeCode(ss, node->exp());
       auto l2 = mkLabel();
-      ss << "JIN #" << l2;
+      ss << "JIN #" << l2 << "\n";
       makeCode(ss, node->stmt());
-      ss << "JMP #" << l1;
-      ss << "#" << l2 << "NOP";
+      ss << "JMP #" << l1 << "\n";
+      ss << "#" << l2 << "NOP\n";
       break;
     }
 
@@ -216,15 +216,15 @@ const char *CodeGen::mkLabel()
   if (nrOfLabels >= maxNrOfLabels)
     resize();
 
-  auto nrOfDigits = (int) log10(nrOfLabels)+1;
-  auto strSize = sizeof("label");
-  auto n = strSize+nrOfDigits+1;
-  auto l = new char[n];
+  auto nrOfDigits = nrOfLabels >= 1
+    ? ((int) log10(nrOfLabels)+1)
+    : 1;
+  auto n = strlen("label")+nrOfDigits;
+  auto buf = new char[n+1];
 
-  strcpy(l, "label");
-  sprintf(l+strSize, "%d", nrOfLabels);
-  l[n] = 0;
-  labels[nrOfLabels] = l;
+  sprintf(buf, "label%u", nrOfLabels);
+  buf[n] = 0;
+  labels[nrOfLabels] = buf;
   ++nrOfLabels;
-  return l;
+  return buf;
 }
