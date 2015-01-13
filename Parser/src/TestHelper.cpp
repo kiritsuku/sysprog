@@ -1,3 +1,4 @@
+#include <sys/resource.h>
 #include "TestHelper.h"
 
 void mkNesting(std::stringstream &ss, unsigned nesting)
@@ -143,12 +144,31 @@ void mkString(std::stringstream &ss, Nodes::Node *node, unsigned nesting)
   }
 }
 
+static int increaseStackSize()
+{
+  // stack size in MB
+  const rlim_t stackSize = 1024*1024*50;
+  struct rlimit rl;
+  auto res = getrlimit(RLIMIT_STACK, &rl);
+  if (res == 0 && rl.rlim_cur < stackSize) {
+    rl.rlim_cur = stackSize;
+    res = setrlimit(RLIMIT_STACK, &rl);
+    if (res != 0) {
+      fprintf(stderr, "Error: couldn't increase stacksize. setrlimet returned '%d'\n.", res);
+    }
+  }
+  return res;
+
+}
+
 int main(int argc, char* argv[])
 {
   if (argc < 2) {
     fprintf(stderr, "Error: path to input file expected.\n");
     return -1;
   }
+
+  increaseStackSize();
 
   auto fileName(argv[1]);
   auto noErr = false;
