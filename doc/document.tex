@@ -27,6 +27,9 @@ Der Compiler besteht aus mehreren Komponenten:
     \item \textit{Symboltable} - Speichert gefundene Identifier. Um erkennen zu können ob ein Identifier schon ein mal gefunden wurde und ob es sich bei dem Identifier um ein Schlüsselwort handelt werden diese in der Symboltable gespeichert. Sie ermöglicht ein schnelles abspeichern und wiederfinden der Identifier. Außerdem gibt sie ein sogenanntes Symbol zurück, das als Referenz auf einen Identifier dient und zusätzliche nützliche Informationen über den Identifier speichert.
     \item \textit{ErrorHandler} - Speichert die Position und eine Fehlermeldung zu einem gefundenen Fehler. Der ErrorHandler kann gefundene Fehler zusammen mit ihrer Position, der Fehlermeldung und der Zeile, in der der Fehler vorkam, auf der Konsole ausgeben.
     \item \textit{Scanner} - Kommuniziert mit Buffer, Automat, Symboltable und ErrorHandler um einem Tokenstrom zu produzieren. Dabei nimmt der Scanner so lange Zeichen aus dem Buffer entgegen und gibt diese an den Automat weiter bis dieser einen Token produzieren kann. Der produzierte Token wird daraufhin an die Komponente, die den Scanner aufruft, weitergegeben. Tritt ein Fehler beim produzieren eines Tokens auf, z.B. weil ein ungültiges Zeichen gefunden wurde, dann wird dieser Fehler im ErrorHandler gespeichert und der Scanner gibt ein Error Token aus. Wird ein Identifier Token erkannt prüft der Scanner mit Hilfe der Symboltable ob es sich um ein Schlüsselwort handelt und gibt dementsprechend ein anderes Token zurück. Sobald der Buffer keine weiteren Zeichen mehr zur Verfügung stellt, gibt der Scanner ein EOF Token aus.
+    \item \textit{Parser} - siehe Dokumentation im Kapitel Parsing
+    \item \textit{Typer} - siehe Dokumentation im Kapitel Typechecking
+    \item \textit{CodeGen} - siehe Dokumentation im Kapitel Codegenerierung
 \end{itemize}
 
 \chapter{Wichtige Verzeichnisse und Dateien}
@@ -180,5 +183,82 @@ Die Funktionsweise des Automaten wird durch das folgende Diagramm verdeutlicht:
 \draw (28.36,-33.16) node [below] {$sonst$};
 \end{tikzpicture}
 \end{center}
+
+\chapter{Parsing}
+
+Der Parser ist dafür zuständig die Token vom Scanner entgegen zu nehmen um dann daraus einen Syntaxbaum generieren zu können. Dabei überprüft der Parser syntaktische Korrektheit des Programms und gibt Fehlermeldungen aus falls er einen Syntaxfehler findet. Der Parser kann keine semantischen Fehler im Programm finden (z.B. die Zuweisung eines Integers an eine Variable, die ein Array referenziert), dies übernimmt der Typechecker, der aufgerufen wird sobald die Parsephase erfolgreich abgeschlossen wurde.
+
+\section{Funktionsweise}
+Der Parser ist ein \href{http://en.wikipedia.org/wiki/Recursive_descent_parser}{recursive-descent-parser} und parst folgende Grammatik:
+
+\begin{verbatim}
+PROG       ::= DECLS STATEMENTS
+DECLS      ::= DECL ; DECLS | eps
+DECL       ::= int ARRAY identifier
+ARRAY      ::= [ integer ] | eps
+STATEMENTS ::= STATEMENT ; STATEMENTS | eps
+STATEMENT  ::= identifier INDEX := EXP
+             | write ( EXP )
+             | read ( identifier INDEX )
+             | {STATEMENTS}
+             | if ( EXP ) STATEMENT else STATEMENT
+             | while ( EXP ) STATEMENT
+EXP        ::= EXP2 OP_EXP
+EXP2       ::= ( EXP ) | identifier INDEX | integer | - EXP2 | ! EXP2
+INDEX      ::= [ EXP ] | eps
+OP_EXP     ::= OP EXP | eps
+OP         ::= + | - | * | / | < | > | = | <:> | &
+
+eps = epsilon symbol
+\end{verbatim}
+
+Die obige Grammatik ist bereits eine \href{http://en.wikipedia.org/wiki/Parsing_expression_grammar}{parsing-expression-grammar} (PEG), d.h. Linksrekursion und Mehrdeutigkeiten wurden bereits aufgelöst. Der Parser parst also exakt diese Grammatik und wandelt sie in einen Syntaxbaum um, der exakt der PEG entspricht. Der Parser macht einen Lookup auf das nächste Token bevor er eine Rekursionsstufe tiefer geht, was allerdings nur passiert wenn er ein validen Token findet. Im Falle eines invaliden Tokens wird eine Fehlermeldung ausgegeben, die anzeigt welche Token erwartet und welches gefunden wurde.
+
+Da der Parser die PEG exakt parst, wächst der Stack sehr schnell - bei auftretenden Überläufen im Parser muss der Stack also erhöht werden. Es ist möglich, die Grammatik so zu transformieren, dass der Stack nicht so stark wächst, dies wurde allerdings nicht umgesetzt. Der commit \texttt{050b035c5f717f460ae840574dbe0e8169cba916} enthält ein Beispiel, das zeigt, wie man den Stack in C++ erhöht.
+
+\section{Parsebaum}
+Da der Parsebaum die PEG exakt repräsentiert, besitzt er genau so viele unterschiedliche Knotentypen wie es Nichtterminale in der PEG gibt. Die Implementierung stellt aber nur einen Typ names \texttt{Node} bereit, der eine Methode namens \texttt{tpe} bereitstellt, über die der repräsentierte Typ herausgefunden werden kann. Der \texttt{Node} Typ besitzt weitere Methoden, über die man an dessen Inhalt herankommt. All diese Methoden sind abhängig vom repräsentierten Typ, wird versucht auf einen Inhalt zuzugreifen, der nicht repräsentiert wird so wird ein Laufzeitfehler ausgelöst. Ein Beispiel:
+
+\begin{verbatim}
+switch (node->tpe()) {
+  case Nodes::Prog:
+    node->decls(); // ok
+    node->stmts(); // ok
+    node->exp(); // Laufzeitfehler
+    break;
+  case ... // restliche Typen
+}
+\end{verbatim}
+
+Die Namen der Methoden entsprechen in den meisten Fällen den Namen der Nichtterminale in der PEG, welcher Typ welche Operationen unterstützt steht in den Dokumentationskommentaren von \texttt{Node}.
+
+Der Baum kann sehr einfach traversiert werden, die Vorgehensweise im Allgemeinen:
+
+\begin{verbatim}
+void traverse(Nodes::Node *node) {
+  switch (node->tpe()) {
+    case Nodes::Prog:
+      traverse(node->decls());
+      traverse(node->stmts());
+      // behandle decls() und stmts() falls notwendig
+      break;
+    case ... // restliche Typen
+  }
+}
+\end{verbatim}
+
+Die Tests zu der Parserphase lassen sich im Verzeichnis \texttt{tests/parser} finden.
+
+\chapter{Typechecking}
+
+Beim Typechecking wird überprüft, ob die drei existierenden Typen \texttt{Int}, \texttt{IntArray} und \texttt{NoType} korrekt benutzt wurden und ob referenzierte Variablenbezeichner existieren und ob Operationen auf einem Typ definiert sind. Eine Fehlermeldung wird ausgegeben wenn ein Fehler gefunden wurde. Die Typüberprüfung wurde durch einen einfachen Traverser realisiert, der Baum muss nicht mehrere Male durchlaufen werden, da der erste Durchlauf alle möglichen Fehlermöglichkeiten bereits vollständig auflösen kann. Die gefundenen Typinformationen werden in dem, zum Variablenbezeichner zugehörigen \texttt{Symbol} abgelegt, das über den Baum referenziert werden kann.
+
+Die Tests zu der Typisierungsphase lassen sich im Verzeichnis \texttt{tests/typer} finden.
+
+\chapter{Codegenerierung}
+
+Bei der Codegenerierung müssen keine Fehler im Syntaxbaum gesucht werden, alle möglichen Fehlerquellen wurden bereits aufgelöst. Die Codegenerierung funktioniert sehr einfach. Es ist wieder ein Traverser, der für jeden Knotentyp den zugehören Bytecode für die virtuelle Maschine ausspuckt. Die einzige Schwierigkeit liegt in der Generierung des Codes für die Operationen \texttt{> (größer)} und \texttt{<:> (ungleich)}, da diese von der virtuellen Maschine nicht unterstützt werden. Sie müssen durch Äquivalenzumformungen mit Hilfe von anderen Operationen repräsentiert werden.
+
+Die Tests zu der Codegenerierungsphase lassen sich im Verzeichnis \texttt{tests/codegen} finden.
 
 \end{document}
